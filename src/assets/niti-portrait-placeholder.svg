@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Profile placeholder">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#fbeee8"/>
+      <stop offset="60%" stop-color="#f9f3ef"/>
+      <stop offset="100%" stop-color="#f0e5db"/>
+    </radialGradient>
+    <linearGradient id="silhouette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d07258"/>
+      <stop offset="100%" stop-color="#bf6a52"/>
+    </linearGradient>
+    <linearGradient id="shoulder" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#19140f"/>
+      <stop offset="100%" stop-color="#3a2c20"/>
+    </linearGradient>
+    <radialGradient id="cheek" cx="50%" cy="60%" r="50%">
+      <stop offset="0%" stop-color="#ea9780" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#ea9780" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="600" height="600" fill="url(#bg)"/>
+
+  <!-- subtle dot grid echoing hero background -->
+  <g fill="#eadcca" opacity=".55">
+    <circle cx="80"  cy="90"  r="2.5"/>
+    <circle cx="150" cy="60"  r="2"/>
+    <circle cx="510" cy="120" r="2.5"/>
+    <circle cx="540" cy="220" r="2"/>
+    <circle cx="60"  cy="320" r="2"/>
+    <circle cx="100" cy="450" r="2.5"/>
+    <circle cx="520" cy="430" r="2"/>
+    <circle cx="470" cy="520" r="2.5"/>
+  </g>
+
+  <!-- accent dots -->
+  <circle cx="120" cy="170" r="6" fill="#7cc1bf" opacity=".75"/>
+  <circle cx="490" cy="80"  r="5" fill="#d9a74a" opacity=".85"/>
+  <circle cx="540" cy="340" r="4" fill="#7cc1bf" opacity=".7"/>
+  <circle cx="80"  cy="240" r="4" fill="#d9a74a" opacity=".75"/>
+
+  <!-- shoulders / torso -->
+  <path d="M70 600 C 100 470, 200 430, 300 430 C 400 430, 500 470, 530 600 Z"
+        fill="url(#shoulder)"/>
+
+  <!-- neck -->
+  <path d="M260 380 Q 300 415 340 380 L 340 440 Q 300 455 260 440 Z"
+        fill="url(#silhouette)" opacity=".95"/>
+
+  <!-- head -->
+  <ellipse cx="300" cy="270" rx="115" ry="135" fill="url(#silhouette)"/>
+
+  <!-- soft cheek glow -->
+  <ellipse cx="300" cy="290" rx="100" ry="115" fill="url(#cheek)"/>
+
+  <!-- hair sweep -->
+  <path d="M195 230
+           Q 200 130 300 120
+           Q 410 125 410 240
+           Q 405 195 360 175
+           Q 320 200 270 195
+           Q 220 195 200 240 Z"
+        fill="#19140f" opacity=".92"/>
+
+  <!-- shoulder collar highlight -->
+  <path d="M150 600 C 180 510, 240 480, 300 480 C 360 480, 420 510, 450 600"
+        stroke="#bf6a52" stroke-width="2" fill="none" opacity=".35"/>
+</svg>

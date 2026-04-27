@@ -1,0 +1,168 @@
+/* IntroCard — self-contained except CSS variables from app theme (:root). */
+.intro-card-root {
+  position: relative;
+  animation: intro-card-fadeUp 0.8s 0.2s ease both;
+}
+
+.intro-card-root .hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.intro-card-root .hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+}
+
+.intro-card-root .hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-d));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.intro-card-root .hero-card-name {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.intro-card-root .hero-card-role {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 20px;
+}
+
+.intro-card-root .hero-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.intro-card-root .tag {
+  padding: 4px 12px;
+  border-radius: var(--radius-xl);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.intro-card-root .tag-primary {
+  background: var(--primary-s);
+  color: var(--primary-d);
+}
+
+.intro-card-root .tag-teal {
+  background: var(--secondary-s);
+  color: var(--secondary-h);
+}
+
+.intro-card-root .tag-gold {
+  background: var(--accent-s);
+  color: var(--accent-h);
+}
+
+.intro-card-root .tag-sand {
+  background: var(--bg-muted);
+  color: var(--text-2);
+}
+
+.intro-card-root .hero-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.intro-card-root .hero-method {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.intro-card-root .hero-method-icon {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.intro-card-root .hero-method-name {
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.intro-card-root .float-badge {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-md);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  animation: intro-card-float 4s ease-in-out infinite;
+}
+
+.intro-card-root .float-badge-1 {
+  top: -20px;
+  right: -20px;
+  animation-delay: 0s;
+}
+
+.intro-card-root .float-badge-2 {
+  bottom: 60px;
+  left: -30px;
+  animation-delay: 1.5s;
+}
+
+.intro-card-root .badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+@keyframes intro-card-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes intro-card-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

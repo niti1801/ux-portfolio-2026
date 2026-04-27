@@ -1,0 +1,5 @@
+@import './portfolio.css';
+
+#root {
+  min-height: 100svh;
+}

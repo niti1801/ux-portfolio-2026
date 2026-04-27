@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Placeholder portrait">
+  <defs>
+    <linearGradient id="npbg" x1="18%" y1="12%" x2="88%" y2="92%">
+      <stop offset="0%" stop-color="#fdf3ec"/>
+      <stop offset="55%" stop-color="#e8c4b5"/>
+      <stop offset="100%" stop-color="#c9a08f"/>
+    </linearGradient>
+    <radialGradient id="npglow" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fffaf7" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#fffaf7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="200" cy="200" r="200" fill="url(#npbg)"/>
+  <circle cx="200" cy="200" r="200" fill="url(#npglow)"/>
+  <text
+    x="200"
+    y="238"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="78"
+    font-weight="500"
+    fill="#6b4f42"
+    letter-spacing="-0.02em"
+  >NP</text>
+</svg>
