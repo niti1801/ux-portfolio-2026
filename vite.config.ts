@@ -9,10 +9,15 @@ const THEME_SCRIPT_DARK_ONLY = `      (function () {
         } catch (e) {}
       })()`.trimStart()
 
+// Same public path in dev, preview, and GitHub Pages (matches the live site).
+const GITHUB_PAGES_BASE = '/ux-portfolio-2026/'
+
 // https://vite.dev/config/
-// Production (GitHub Pages) uses the repo name as the path; local dev uses root.
 export default defineConfig({
-  base: process.env.GITHUB_ACTIONS ? '/ux-portfolio-2026/' : '/',
+  base: GITHUB_PAGES_BASE,
+  server: {
+    open: GITHUB_PAGES_BASE,
+  },
   plugins: [
     react(),
     {

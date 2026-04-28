@@ -7,13 +7,16 @@ React + TypeScript + Vite portfolio.
 
 ## Development
 
+Vite is configured to use the same path as the live site (`/ux-portfolio-2026/`), so **local `npm run dev` and `npm run preview` match the GitHub Pages URL** (no separate “CI-only” base).
+
 ```sh
 npm install
 npm run dev
 ```
 
+- Your browser should open to **http://localhost:5173/ux-portfolio-2026/** (if not, go there manually). The root of the dev server is not the app.
 - `npm run build` — production build  
-- `npm run preview` — preview the build locally  
+- `npm run preview` — preview the build, usually at **http://localhost:4173/ux-portfolio-2026/**  
 - `npm run lint` — ESLint  
 
 The live site is deployed to GitHub Pages when you push to `main` (see [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). If the site is blank the first time, in the repo go to **Settings → Pages** and set the **Build and deployment** source to **GitHub Actions**.

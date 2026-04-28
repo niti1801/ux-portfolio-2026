@@ -7,6 +7,7 @@
  */
 export type SiteThemeMode = 'full' | 'darkOnly'
 
-export const SITE_THEME_MODE: SiteThemeMode = 'darkOnly'
-
-export const siteShowsThemeSwitch = () => SITE_THEME_MODE === 'full'
+/** Set per branch. Cast keeps comparisons valid in TS (literal branch vs `light-and-dark-mode`). */
+const THEME_MODE = 'darkOnly' as SiteThemeMode
+export const SITE_THEME_MODE: SiteThemeMode = THEME_MODE
+export const siteShowsThemeSwitch = () => THEME_MODE === 'full'
