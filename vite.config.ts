@@ -9,14 +9,14 @@ const THEME_SCRIPT_DARK_ONLY = `      (function () {
         } catch (e) {}
       })()`.trimStart()
 
-// Same public path in dev, preview, and GitHub Pages (matches the live site).
-const GITHUB_PAGES_BASE = '/ux-portfolio-2026/'
+// Use root paths so the site works on a custom apex domain.
+const SITE_BASE = '/'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: GITHUB_PAGES_BASE,
+  base: SITE_BASE,
   server: {
-    open: GITHUB_PAGES_BASE,
+    open: SITE_BASE,
   },
   plugins: [
     react(),
