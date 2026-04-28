@@ -18,7 +18,7 @@ feel human
 
 ## description
 
-I'm Niti Punjabi — a UX Researcher helping teams discover what users truly need, and translating those insights into products people love.
+I'm Niti Punjabi — a UX Researcher and Product designer shaping research-driven design outcomes for complex digital enterprise and consumer-focused products.
 
 ## stat_1_value
 
@@ -30,7 +30,7 @@ Years of experience
 
 ## stat_2_value
 
-40+
++
 
 ## stat_2_label
 
@@ -38,7 +38,7 @@ Products shaped
 
 ## stat_3_value
 
-600+
+60+
 
 ## stat_3_label
 

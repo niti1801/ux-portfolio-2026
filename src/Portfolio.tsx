@@ -397,20 +397,6 @@ export function Portfolio() {
         <p className="hero-desc">
           {copy.hero.description}
         </p>
-        <div className="hero-stats">
-          <div>
-            <div className="hero-stat-num">{copy.hero.stat1Value}</div>
-            <div className="hero-stat-label">{copy.hero.stat1Label}</div>
-          </div>
-          <div>
-            <div className="hero-stat-num">{copy.hero.stat2Value}</div>
-            <div className="hero-stat-label">{copy.hero.stat2Label}</div>
-          </div>
-          <div>
-            <div className="hero-stat-num">{copy.hero.stat3Value}</div>
-            <div className="hero-stat-label">{copy.hero.stat3Label}</div>
-          </div>
-        </div>
       </div>
 
       <div className="hero-portrait reveal">
