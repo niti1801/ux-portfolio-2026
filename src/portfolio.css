@@ -716,41 +716,6 @@ section { padding: 100px 0; }
   color: var(--primary);
   opacity: .3;
 }
-.about-portrait-label {
-  position: absolute;
-  bottom: 24px; left: 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  box-shadow: var(--shadow-md);
-  font-size: 12px;
-}
-.about-portrait-label strong {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.about-years {
-  position: absolute;
-  top: 24px; right: -20px;
-  background: var(--primary);
-  color: #fff;
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-}
-.about-years-num {
-  font-family: var(--font-display);
-  font-size: 36px;
-  font-weight: 500;
-  line-height: 1;
-  display: block;
-}
-.about-years-label { font-size: 11px; opacity: .85; }
 
 .about-lead {
   font-family: var(--font-display);

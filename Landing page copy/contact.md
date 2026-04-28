@@ -4,10 +4,10 @@
 Let's work together
 
 ## heading
-Have a research challenge?
+Have something for me?
 
 ## subtitle
-I&apos;m open to research contracts, full-time roles, and speaking engagements. Let&apos;s find out what your users really need.
+I'm open to full-time roles, contracts, as well as coffee chats. Let's connect!
 
 ## email
 Email

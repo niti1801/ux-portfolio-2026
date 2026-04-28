@@ -537,18 +537,6 @@ export function Portfolio() {
       <div className="about-visual-wrap reveal">
         <div className="about-portrait">
           <div className="about-portrait-inner">NP</div>
-          <div className="about-portrait-label">
-            <strong>Niti Punjabi</strong>
-            Senior UX Researcher · 8 years
-          </div>
-        </div>
-        <div className="about-years">
-          <span className="about-years-num">8+</span>
-          <div className="about-years-label">
-            Years in
-            <br />
-            research
-          </div>
         </div>
       </div>
 
