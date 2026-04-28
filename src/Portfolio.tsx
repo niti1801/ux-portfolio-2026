@@ -564,10 +564,6 @@ export function Portfolio() {
           <div className="about-skill"><div className="about-skill-icon">🏷️</div> Affinity diagramming</div>
         </div>
 
-        <a href={`${baseHref}about`} className="btn-tertiary reveal reveal-delay-3" style={{width: "fit-content"}}>
-          {workCardCtaLabel(copy.about.cta)}
-          <span className="btn-ghost__arrow" aria-hidden="true">→</span>
-        </a>
       </div>
     </div>
   </div>

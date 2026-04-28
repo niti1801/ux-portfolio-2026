@@ -134,7 +134,7 @@ export const landingPageCopy = {
       'paragraph_2',
       "I'm particularly passionate about inclusive research practices — making sure we hear from users who are often left out of the conversation: non-native speakers, people with disabilities, and those in emerging markets.",
     ),
-    cta: pick(about, 'cta', 'Get in touch →'),
+    cta: pick(about, 'cta', 'Learn more →'),
   },
   methods: {
     eyebrow: pick(methods, 'eyebrow', 'Research Methods'),
