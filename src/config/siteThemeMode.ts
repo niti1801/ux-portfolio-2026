@@ -7,6 +7,6 @@
  */
 export type SiteThemeMode = 'full' | 'darkOnly'
 
-export const SITE_THEME_MODE: SiteThemeMode = 'darkOnly'
+export const SITE_THEME_MODE: SiteThemeMode = 'full'
 
 export const siteShowsThemeSwitch = () => SITE_THEME_MODE === 'full'
