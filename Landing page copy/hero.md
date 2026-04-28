@@ -13,4 +13,4 @@ things
 feel human
 
 ## description
-Hi, I'm Niti, a UX Researcher & Product Designer based in Mountain View, CA. I partner with product teams to to navigate ambiguous problem spaces and build thoughtful experiences.
+Hi, I'm Niti, a UX Researcher & Product Designer focused on turning user insights into clear product direction, thoughtful experiences, and measurable outcomes.
