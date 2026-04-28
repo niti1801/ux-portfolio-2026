@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { SITE_THEME_MODE, siteShowsThemeSwitch } from '../config/siteThemeMode'
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
@@ -14,6 +15,8 @@ export type ResolvedTheme = 'light' | 'dark'
 const STORAGE_KEY = 'theme-preference'
 
 type ThemeContextValue = {
+  /** When false, the site is locked (no light mode / no UI to change theme) */
+  allowsUserThemeChoice: boolean
   /** Stored choice: follow OS, or lock to light / dark */
   preference: ThemePreference
   setPreference: (p: ThemePreference) => void
@@ -43,50 +46,64 @@ function applyDomTheme(resolved: ResolvedTheme) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
-    typeof window === 'undefined' ? 'system' : readStoredPreference(),
-  )
+  const fullMode = siteShowsThemeSwitch()
+  const [preference, setPreferenceState] = useState<ThemePreference>(() => {
+    if (typeof window === 'undefined') return 'system'
+    if (!fullMode) return 'dark'
+    return readStoredPreference()
+  })
   const [systemDark, setSystemDark] = useState(() =>
     typeof window === 'undefined'
       ? false
       : window.matchMedia('(prefers-color-scheme: dark)').matches,
   )
 
-  const resolvedTheme = useMemo(
-    () => resolveTheme(preference, systemDark),
-    [preference, systemDark],
-  )
+  const resolvedTheme = useMemo((): ResolvedTheme => {
+    if (SITE_THEME_MODE === 'darkOnly') return 'dark'
+    return resolveTheme(preference, systemDark)
+  }, [preference, systemDark])
 
   useEffect(() => {
     applyDomTheme(resolvedTheme)
   }, [resolvedTheme])
 
   useEffect(() => {
+    if (!fullMode) return
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const onChange = () => setSystemDark(mq.matches)
     mq.addEventListener('change', onChange)
-    setSystemDark(mq.matches)
     return () => mq.removeEventListener('change', onChange)
-  }, [])
+  }, [fullMode])
 
-  const setPreference = useCallback((p: ThemePreference) => {
-    setPreferenceState(p)
-    try {
-      if (p === 'system') localStorage.removeItem(STORAGE_KEY)
-      else localStorage.setItem(STORAGE_KEY, p)
-    } catch {
-      /* ignore */
-    }
-  }, [])
+  const setPreference = useCallback(
+    (p: ThemePreference) => {
+      if (SITE_THEME_MODE === 'darkOnly') return
+      setPreferenceState(p)
+      try {
+        if (p === 'system') localStorage.removeItem(STORAGE_KEY)
+        else localStorage.setItem(STORAGE_KEY, p)
+      } catch {
+        /* ignore */
+      }
+    },
+    [],
+  )
 
   const value = useMemo(
-    () => ({ preference, setPreference, resolvedTheme }),
-    [preference, setPreference, resolvedTheme],
+    () => ({
+      allowsUserThemeChoice: fullMode,
+      preference: fullMode ? preference : 'dark',
+      setPreference,
+      resolvedTheme,
+    }),
+    [fullMode, preference, setPreference, resolvedTheme],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
+// Hook colocated with provider; split would add noise for a small app.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
   const ctx = useContext(ThemeContext)
   if (!ctx) throw new Error('useTheme must be used within ThemeProvider')

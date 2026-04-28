@@ -11,6 +11,7 @@ import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
 import { HeroNetworkCanvas } from './hero/HeroNetworkCanvas'
+import { siteShowsThemeSwitch } from './config/siteThemeMode'
 import { useTheme } from './theme/ThemeProvider'
 import './portfolio.css'
 
@@ -71,6 +72,7 @@ export function Portfolio() {
   const orb3Ref = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
   const { resolvedTheme, setPreference } = useTheme()
+  const showThemeSwitch = siteShowsThemeSwitch()
 
   const toggleTheme = useCallback(() => {
     setPreference(resolvedTheme === 'dark' ? 'light' : 'dark')
@@ -203,7 +205,17 @@ export function Portfolio() {
       </ul>
       <div className="nav-actions">
         <a href="#contact" className="btn-ghost">Let's talk</a>
-        <button type="button" className="theme-toggle" title="Toggle theme" aria-label="Toggle color theme" onClick={toggleTheme}>{resolvedTheme === 'dark' ? '☀️' : '🌙'}</button>
+        {showThemeSwitch ? (
+          <button
+            type="button"
+            className="theme-toggle"
+            title="Toggle theme"
+            aria-label="Toggle color theme"
+            onClick={toggleTheme}
+          >
+            {resolvedTheme === 'dark' ? '☀️' : '🌙'}
+          </button>
+        ) : null}
       </div>
     </div>
   </div>

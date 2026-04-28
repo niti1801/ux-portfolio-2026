@@ -17,3 +17,16 @@ npm run dev
 - `npm run lint` — ESLint  
 
 The live site is deployed to GitHub Pages when you push to `main` (see [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). If the site is blank the first time, in the repo go to **Settings → Pages** and set the **Build and deployment** source to **GitHub Actions**.
+
+## Theme branches (dark-only live site vs. full light/dark in Git)
+
+The **live site** (`main`) is **dark only**: no light theme and **no** sun/moon control in the nav. All light-mode styles stay in the repo for future use, but the public build is locked to dark.
+
+The full experience (light + dark, OS default, and the **☀️ / 🌙** toggle) is kept on branch **`light-and-dark-mode`**. The only file that is intentionally different between the two (for this behavior) is [`src/config/siteThemeMode.ts`](src/config/siteThemeMode.ts):
+
+- **`main`** — `export const SITE_THEME_MODE = 'darkOnly'`
+- **`light-and-dark-mode`** — `export const SITE_THEME_MODE = 'full'`
+
+Workflow: develop features on a branch, merge to `light-and-dark-mode` when the full theme UI is ready; when you are ready to ship the portfolio **without** the toggle, merge into `main` and set (or keep) `SITE_THEME_MODE` to `'darkOnly'` in that one file, then push `main` to update GitHub Pages.
+
+Preview locally: `npm run dev` (with the branch and `siteThemeMode` you have checked out).
