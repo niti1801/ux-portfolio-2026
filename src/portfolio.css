@@ -696,6 +696,9 @@ section { padding: 100px 0; }
   line-height: 1.7;
   margin-top: 16px;
 }
+#work .section-subtitle {
+  max-width: none;
+}
 .section-header.centered .section-subtitle { margin: 16px auto 0; }
 
 /* Divider */

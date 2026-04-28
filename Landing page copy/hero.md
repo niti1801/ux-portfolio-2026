@@ -13,22 +13,4 @@ things
 feel human
 
 ## description
-I'm Niti Punjabi — a UX Researcher helping teams discover what users truly need, and translating those insights into products people love.
-
-## stat_1_value
-5+
-
-## stat_1_label
-Years of experience
-
-## stat_2_value
-40+
-
-## stat_2_label
-Products shaped
-
-## stat_3_value
-600+
-
-## stat_3_label
-Users interviewed
+Hi, I'm Niti, a UX Researcher & Product Designer based in Mountain View, CA. I partner with product teams to to navigate ambiguous problem spaces and build thoughtful experiences.
