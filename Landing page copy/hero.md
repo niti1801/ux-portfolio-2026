@@ -17,29 +17,4 @@ things
 feel human
 
 ## description
-
-I'm Niti Punjabi — a UX Researcher and Product designer shaping research-driven design outcomes for complex digital enterprise and consumer-focused products.
-
-## stat_1_value
-
-5+
-
-## stat_1_label
-
-Years of experience
-
-## stat_2_value
-
-+
-
-## stat_2_label
-
-Products shaped
-
-## stat_3_value
-
-60+
-
-## stat_3_label
-
-Users interviewed
+Hi, I'm Niti, a UX Researcher & Product Designer focused on turning user insights into clear product direction, thoughtful experiences, and measurable outcomes.

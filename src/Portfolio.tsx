@@ -5,6 +5,7 @@ import {
   useState,
   type CSSProperties,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
   type RefObject,
   type ReactNode,
 } from 'react'
@@ -135,6 +136,7 @@ export function Portfolio() {
   const orb1Ref = useRef<HTMLDivElement>(null)
   const orb2Ref = useRef<HTMLDivElement>(null)
   const orb3Ref = useRef<HTMLDivElement>(null)
+  const portraitRef = useRef<HTMLDivElement>(null)
   const workStackRef1 = useRef<HTMLDivElement>(null)
   const workStackRef2 = useRef<HTMLDivElement>(null)
   const workStackRef3 = useRef<HTMLDivElement>(null)
@@ -171,6 +173,24 @@ export function Portfolio() {
     } catch {
       /* ignore */
     }
+  }, [])
+
+  const onPortraitPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduceMotion === true) return
+    const el = e.currentTarget
+    const r = el.getBoundingClientRect()
+    const nx = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1)
+    const ny = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1)
+    const tx = (nx - 0.5) * 10
+    const ty = (ny - 0.5) * 8
+    el.style.setProperty('--portrait-shift-x', `${tx.toFixed(2)}px`)
+    el.style.setProperty('--portrait-shift-y', `${ty.toFixed(2)}px`)
+  }, [reduceMotion])
+
+  const onPortraitPointerLeave = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    el.style.setProperty('--portrait-shift-x', '0px')
+    el.style.setProperty('--portrait-shift-y', '0px')
   }, [])
 
   useEffect(() => {
@@ -384,9 +404,20 @@ export function Portfolio() {
   <div className="container">
     <div className="hero-grid">
       <div className="hero-content">
-        <div className="hero-tag">
-          <div className="hero-tag-dot" />
-          <span className="eyebrow">{copy.hero.availability}</span>
+        <div className="hero-meta-row">
+          <div className="hero-tag">
+            <div className="hero-tag-dot" />
+            <span className="eyebrow">{copy.hero.availability}</span>
+          </div>
+          <div className="hero-location" aria-label="Location">
+            <span className="hero-location__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z" />
+                <circle cx="12" cy="10" r="2.6" />
+              </svg>
+            </span>
+            <span>Mountain View, CA</span>
+          </div>
         </div>
         <h1 className="display display-xl hero-title">
           <span className="hero-title-line">{copy.hero.titleLine1} </span>
@@ -399,7 +430,12 @@ export function Portfolio() {
         </p>
       </div>
 
-      <div className="hero-portrait reveal">
+      <div
+        ref={portraitRef}
+        className="hero-portrait reveal"
+        onPointerMove={onPortraitPointerMove}
+        onPointerLeave={onPortraitPointerLeave}
+      >
         <div className="hero-portrait-frame">
           <img src={nitiHeroPortrait} alt="Niti Punjabi" />
         </div>
