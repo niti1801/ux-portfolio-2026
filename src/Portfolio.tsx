@@ -2,18 +2,36 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useState,
   type CSSProperties,
   type MouseEvent,
+  type RefObject,
   type ReactNode,
 } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform, type MotionStyle } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionStyle, type MotionValue } from 'framer-motion'
 import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
+import { landingPageCopy } from './content/landingPageCopy'
 import { HeroNetworkCanvas } from './hero/HeroNetworkCanvas'
 import { siteShowsThemeSwitch } from './config/siteThemeMode'
 import { useTheme } from './theme/ThemeProvider'
 import './portfolio.css'
+
+type NavSection = 'work' | 'about' | 'methods' | 'testimonials' | 'contact'
+
+/** Strip trailing arrow from markdown CTA so the arrow can animate like the resume button */
+function workCardCtaLabel(cardCta: string): string {
+  return cardCta.replace(/\s*[→›]\s*$/, '').trim()
+}
+
+function splitRoleCompany(role: string): { roleLabel: string; companyLabel: string } {
+  const [roleLabelRaw, companyLabelRaw] = role.split('·').map((part) => part.trim())
+  return {
+    roleLabel: roleLabelRaw ?? role,
+    companyLabel: companyLabelRaw ?? '',
+  }
+}
 
 type ParallaxFeaturedShellProps = {
   cardClassName: string
@@ -24,6 +42,48 @@ type ParallaxFeaturedShellProps = {
   parallaxInvert?: boolean
   visual: ReactNode
   children: ReactNode
+}
+
+type StackedWorkCardProps = {
+  index: number
+  total: number
+  progress: MotionValue<number>
+  stackRef: RefObject<HTMLDivElement | null>
+  children: ReactNode
+}
+
+function StackedWorkCard({ index, total, progress, stackRef, children }: StackedWorkCardProps) {
+  const reduceMotion = useReducedMotion()
+  const smoothProgress = useSpring(progress, { stiffness: 165, damping: 21, mass: 0.3 })
+  const targetScale = reduceMotion === true ? 1 : 0.945
+  const segment = 1 / total
+  const isLast = index === total - 1
+  const shrinkStart = Math.min(index * segment + segment * 0.62, 1)
+  const shrinkEnd = Math.min(index * segment + segment * 0.9, 1)
+  const yLift = reduceMotion === true ? 0 : -18
+  const scale = useTransform(smoothProgress, (p) => {
+    if (isLast) return 1
+    if (reduceMotion === true) return 1
+    if (p <= shrinkStart) return 1
+    if (p >= shrinkEnd) return targetScale
+    const t = (p - shrinkStart) / Math.max(shrinkEnd - shrinkStart, 0.0001)
+    return 1 + (targetScale - 1) * t
+  })
+  const y = useTransform(smoothProgress, (p) => {
+    if (isLast) return 0
+    if (reduceMotion === true) return 0
+    if (p <= shrinkStart) return 0
+    if (p >= shrinkEnd) return yLift
+    const t = (p - shrinkStart) / Math.max(shrinkEnd - shrinkStart, 0.0001)
+    return yLift * t
+  })
+  return (
+    <div ref={stackRef} className="work-stack-item" style={{ zIndex: index + 1 }}>
+      <motion.div className="work-stack-sticky" style={{ scale, y }}>
+        {children}
+      </motion.div>
+    </div>
+  )
 }
 
 function ParallaxFeaturedShell({
@@ -65,14 +125,34 @@ function ParallaxFeaturedShell({
 }
 
 export function Portfolio() {
+  const copy = landingPageCopy
+  const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
   const heroRef = useRef<HTMLElement>(null)
   const orb1Ref = useRef<HTMLDivElement>(null)
   const orb2Ref = useRef<HTMLDivElement>(null)
   const orb3Ref = useRef<HTMLDivElement>(null)
+  const workStackRef1 = useRef<HTMLDivElement>(null)
+  const workStackRef2 = useRef<HTMLDivElement>(null)
+  const workStackRef3 = useRef<HTMLDivElement>(null)
+  const workStackRef4 = useRef<HTMLDivElement>(null)
+  const workStackRefs = [workStackRef1, workStackRef2, workStackRef3, workStackRef4]
+  const workStackRootRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
   const { resolvedTheme, setPreference } = useTheme()
   const showThemeSwitch = siteShowsThemeSwitch()
+  const [activeSection, setActiveSection] = useState<NavSection | null>(null)
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const { scrollYProgress: workStackProgress } = useScroll({
+    target: workStackRootRef,
+    offset: ['start 78%', 'end 22%'],
+  })
+  const testimonialSlides = [
+    { quote: copy.testimonials.featuredQuote, name: copy.testimonials.featuredName, role: copy.testimonials.featuredRole },
+    { quote: copy.testimonials.card1Quote, name: copy.testimonials.card1Name, role: copy.testimonials.card1Role },
+    { quote: copy.testimonials.card2Quote, name: copy.testimonials.card2Name, role: copy.testimonials.card2Role },
+    { quote: copy.testimonials.card3Quote, name: copy.testimonials.card3Name, role: copy.testimonials.card3Role },
+  ]
 
   const toggleTheme = useCallback(() => {
     setPreference(resolvedTheme === 'dark' ? 'light' : 'dark')
@@ -172,6 +252,58 @@ export function Portfolio() {
     return () => io.disconnect()
   }, [])
 
+  useEffect(() => {
+    const sectionIds: NavSection[] = ['work', 'about', 'methods', 'testimonials', 'contact']
+    const sectionEls = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null)
+
+    if (sectionEls.length === 0) return
+
+    const updateActiveSection = () => {
+      const navHeight = navRef.current?.offsetHeight ?? 0
+      const activationLine = navHeight + window.innerHeight * 0.35
+      let currentId: NavSection | null = null
+
+      for (const sectionEl of sectionEls) {
+        if (sectionEl.getBoundingClientRect().top <= activationLine) {
+          currentId = sectionEl.id as NavSection
+        } else {
+          break
+        }
+      }
+
+      setActiveSection(currentId)
+    }
+
+    let rafId = 0
+    const onScrollOrResize = () => {
+      if (rafId) return
+      rafId = requestAnimationFrame(() => {
+        rafId = 0
+        updateActiveSection()
+      })
+    }
+
+    updateActiveSection()
+    window.addEventListener('scroll', onScrollOrResize, { passive: true })
+    window.addEventListener('resize', onScrollOrResize)
+
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize)
+      window.removeEventListener('resize', onScrollOrResize)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (reduceMotion === true) return
+    const timer = window.setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonialSlides.length)
+    }, 5200)
+    return () => window.clearInterval(timer)
+  }, [reduceMotion, testimonialSlides.length])
+
   return (
     <>
 
@@ -198,13 +330,20 @@ export function Portfolio() {
         </a>
       </div>
       <ul className="nav-links">
-        <li><a href="#work">Work</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#methods">Methods</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined}>{copy.nav.work}</a></li>
+        <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined}>{copy.nav.about}</a></li>
+        <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined}>{copy.nav.testimonials}</a></li>
+        <li><a href="#contact" className={activeSection === 'contact' ? 'active' : undefined}>{copy.nav.contact}</a></li>
       </ul>
       <div className="nav-actions">
-        <a href="#contact" className="btn-ghost">Let's talk</a>
+        <a
+          href="https://drive.google.com/file/d/10gm4pZdElG34pMUI_1riEnLzsZZx0nUg/view"
+          className="btn-ghost"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {copy.nav.resume}<span className="btn-ghost__arrow" aria-hidden="true">→</span>
+        </a>
         {showThemeSwitch ? (
           <button
             type="button"
@@ -240,29 +379,29 @@ export function Portfolio() {
       <div className="hero-content">
         <div className="hero-tag">
           <div className="hero-tag-dot" />
-          <span className="eyebrow">Available for new projects</span>
+          <span className="eyebrow">{copy.hero.availability}</span>
         </div>
         <h1 className="display display-xl hero-title">
-          <span className="hero-title-line">I make complex </span>
+          <span className="hero-title-line">{copy.hero.titleLine1} </span>
           <span className="hero-title-line">
-            things <em>feel human</em>.
+            {copy.hero.titleLine2Prefix} <em>{copy.hero.titleLine2Emphasis}</em>.
           </span>
         </h1>
         <p className="hero-desc">
-          I'm Niti Punjabi — a UX Researcher helping teams discover what users truly need, and translating those insights into products people love.
+          {copy.hero.description}
         </p>
         <div className="hero-stats">
           <div>
-            <div className="hero-stat-num">8+</div>
-            <div className="hero-stat-label">Years of research</div>
+            <div className="hero-stat-num">{copy.hero.stat1Value}</div>
+            <div className="hero-stat-label">{copy.hero.stat1Label}</div>
           </div>
           <div>
-            <div className="hero-stat-num">40+</div>
-            <div className="hero-stat-label">Products shaped</div>
+            <div className="hero-stat-num">{copy.hero.stat2Value}</div>
+            <div className="hero-stat-label">{copy.hero.stat2Label}</div>
           </div>
           <div>
-            <div className="hero-stat-num">600+</div>
-            <div className="hero-stat-label">Users interviewed</div>
+            <div className="hero-stat-num">{copy.hero.stat3Value}</div>
+            <div className="hero-stat-label">{copy.hero.stat3Label}</div>
           </div>
         </div>
       </div>
@@ -280,98 +419,118 @@ export function Portfolio() {
 <section id="work">
   <div className="container">
     <div className="section-header reveal">
-      <div className="eyebrow">Case Studies</div>
-      <h2 className="display display-lg" style={{marginTop: 16.0}}>Selected work</h2>
-      <p className="section-subtitle">A curated collection of research projects that drove measurable product outcomes.</p>
+      <div className="eyebrow">{copy.work.eyebrow}</div>
+      <h2 className="display display-lg" style={{marginTop: 16.0}}>{copy.work.heading}</h2>
+      <p className="section-subtitle">{copy.work.subtitle}</p>
     </div>
 
-    <div className="work-grid">
-      <ParallaxFeaturedShell
-        cardClassName="work-card-featured reveal"
-        visual="🏥"
-      >
+    <div className="work-grid" ref={workStackRootRef}>
+      <StackedWorkCard index={0} total={4} progress={workStackProgress} stackRef={workStackRefs[0]}>
+        <ParallaxFeaturedShell
+          cardClassName="work-card-featured reveal"
+          visual="🏥"
+        >
         <div className="work-card-meta">
           <span className="work-card-num">01</span>
-          <span className="tag tag-primary">Healthcare</span>
-          <span className="tag tag-sand">2024</span>
+          <span className="tag tag-primary">{copy.work.card1Tag}</span>
+          <span className="tag tag-sand">{copy.work.card1Year}</span>
         </div>
-        <h3 className="work-card-title">Redesigning patient onboarding for a digital health platform</h3>
-        <p className="work-card-desc">Discovered critical friction points in a 7-step registration flow through contextual inquiry and usability testing, leading to a 52% drop-off reduction.</p>
+        <h3 className="work-card-title">{copy.work.card1Title}</h3>
+        <p className="work-card-desc">{copy.work.card1Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">Contextual Inquiry, Usability Testing</div></div>
-          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">12 weeks</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">48 patients, 6 clinicians</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">52% drop-off reduction</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card1Methods}</div></div>
+          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card1Duration}</div></div>
+          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card1Participants}</div></div>
+          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card1Outcome}</div></div>
         </div>
-        <a href="#" className="work-card-link">Read case study →</a>
-      </ParallaxFeaturedShell>
+        <a href={`${baseHref}case-studies/healthcare-onboarding-redesign`} className="work-card-link">
+          {workCardCtaLabel(copy.work.cardCta)}
+          <span className="work-card-link__arrow" aria-hidden="true">→</span>
+        </a>
+        </ParallaxFeaturedShell>
+      </StackedWorkCard>
 
-      <ParallaxFeaturedShell
-        cardClassName="work-card-featured reveal reveal-delay-1"
-        rtl
-        parallaxInvert
-        imageClassName="teal-grad"
-        visual="🏦"
-      >
+      <StackedWorkCard index={1} total={4} progress={workStackProgress} stackRef={workStackRefs[1]}>
+        <ParallaxFeaturedShell
+          cardClassName="work-card-featured reveal reveal-delay-1"
+          rtl
+          parallaxInvert
+          imageClassName="teal-grad"
+          visual="🏦"
+        >
         <div className="work-card-meta">
           <span className="work-card-num">02</span>
-          <span className="tag tag-teal">Fintech</span>
-          <span className="tag tag-sand">2023</span>
+          <span className="tag tag-teal">{copy.work.card2Tag}</span>
+          <span className="tag tag-sand">{copy.work.card2Year}</span>
         </div>
-        <h3 className="work-card-title">Understanding trust barriers in a peer-to-peer lending app</h3>
-        <p className="work-card-desc">Led a diary study and in-depth interviews to map trust formation over time, uncovering 6 key trust signals that became design principles.</p>
+        <h3 className="work-card-title">{copy.work.card2Title}</h3>
+        <p className="work-card-desc">{copy.work.card2Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">Diary Study, Depth Interviews</div></div>
-          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">8 weeks</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">32 lenders {'&'} borrowers</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">6 design principles adopted</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card2Methods}</div></div>
+          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card2Duration}</div></div>
+          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card2Participants}</div></div>
+          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card2Outcome}</div></div>
         </div>
-        <a href="#" className="work-card-link">Read case study →</a>
-      </ParallaxFeaturedShell>
+        <a href={`${baseHref}case-studies/fintech-trust-barriers`} className="work-card-link">
+          {workCardCtaLabel(copy.work.cardCta)}
+          <span className="work-card-link__arrow" aria-hidden="true">→</span>
+        </a>
+        </ParallaxFeaturedShell>
+      </StackedWorkCard>
 
-      <ParallaxFeaturedShell
-        cardClassName="work-card-featured reveal reveal-delay-2"
-        imageClassName="gold-grad"
-        visual="🛒"
-      >
+      <StackedWorkCard index={2} total={4} progress={workStackProgress} stackRef={workStackRefs[2]}>
+        <ParallaxFeaturedShell
+          cardClassName="work-card-featured reveal reveal-delay-2"
+          imageClassName="gold-grad"
+          visual="🛒"
+        >
         <div className="work-card-meta">
           <span className="work-card-num">03</span>
-          <span className="tag tag-gold">E-commerce</span>
-          <span className="tag tag-sand">2022</span>
+          <span className="tag tag-gold">{copy.work.card3Tag}</span>
+          <span className="tag tag-sand">{copy.work.card3Year}</span>
         </div>
-        <h3 className="work-card-title">Checkout friction mapping across 5 user segments</h3>
-        <p className="work-card-desc">Card sorting and tree testing revealed a mental model mismatch in navigation that caused 28% cart abandonment.</p>
+        <h3 className="work-card-title">{copy.work.card3Title}</h3>
+        <p className="work-card-desc">{copy.work.card3Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">Card Sorting, Tree Testing</div></div>
-          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">10 weeks</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">125 shoppers across 5 segments</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">IA redesign; 28% abandonment driver addressed</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card3Methods}</div></div>
+          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card3Duration}</div></div>
+          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card3Participants}</div></div>
+          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card3Outcome}</div></div>
         </div>
-        <a href="#" className="work-card-link">Read case study →</a>
-      </ParallaxFeaturedShell>
+        <a href={`${baseHref}case-studies/ecommerce-checkout-friction`} className="work-card-link">
+          {workCardCtaLabel(copy.work.cardCta)}
+          <span className="work-card-link__arrow" aria-hidden="true">→</span>
+        </a>
+        </ParallaxFeaturedShell>
+      </StackedWorkCard>
 
-      <ParallaxFeaturedShell
-        cardClassName="work-card-featured reveal reveal-delay-3"
-        rtl
-        parallaxInvert
-        imageStyle={{ background: 'linear-gradient(135deg, var(--primary-s), var(--accent-s))' }}
-        visual="📱"
-      >
+      <StackedWorkCard index={3} total={4} progress={workStackProgress} stackRef={workStackRefs[3]}>
+        <ParallaxFeaturedShell
+          cardClassName="work-card-featured reveal reveal-delay-3"
+          rtl
+          parallaxInvert
+          imageStyle={{ background: 'linear-gradient(135deg, var(--primary-s), var(--accent-s))' }}
+          visual="📱"
+        >
         <div className="work-card-meta">
           <span className="work-card-num">04</span>
-          <span className="tag tag-teal">Consumer</span>
-          <span className="tag tag-sand">2023</span>
+          <span className="tag tag-teal">{copy.work.card4Tag}</span>
+          <span className="tag tag-sand">{copy.work.card4Year}</span>
         </div>
-        <h3 className="work-card-title">Accessibility audit of a social media app for older adults</h3>
-        <p className="work-card-desc">Inclusive research with 24 adults aged 60+ surfaced 31 accessibility gaps, prioritized into a 3-sprint backlog.</p>
+        <h3 className="work-card-title">{copy.work.card4Title}</h3>
+        <p className="work-card-desc">{copy.work.card4Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">Usability Sessions, Heuristic Review</div></div>
-          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">6 weeks</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">24 adults aged 60+</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">31 gaps → 3-sprint backlog</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card4Methods}</div></div>
+          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card4Duration}</div></div>
+          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card4Participants}</div></div>
+          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card4Outcome}</div></div>
         </div>
-        <a href="#" className="work-card-link">Read case study →</a>
-      </ParallaxFeaturedShell>
+        <a href={`${baseHref}case-studies/social-app-accessibility-audit`} className="work-card-link">
+          {workCardCtaLabel(copy.work.cardCta)}
+          <span className="work-card-link__arrow" aria-hidden="true">→</span>
+        </a>
+        </ParallaxFeaturedShell>
+      </StackedWorkCard>
     </div>
   </div>
 </section>
@@ -399,18 +558,18 @@ export function Portfolio() {
       </div>
 
       <div className="about-content">
-        <div className="eyebrow reveal">About me</div>
+        <div className="eyebrow reveal">{copy.about.eyebrow}</div>
         <h2 className="display display-lg reveal reveal-delay-1" style={{marginTop: 16.0, marginBottom: 28.0}}>
-          Curious by nature. Rigorous by design.
+          {copy.about.heading}
         </h2>
         <p className="about-lead reveal reveal-delay-1">
-          I believe that the best products are built on a deep understanding of the <em>people</em> who use them.
+          {copy.about.lead}
         </p>
         <p className="about-body reveal reveal-delay-2">
-          With over 8 years of experience in UX research, I've partnered with teams at startups and enterprise companies to uncover the "why" behind user behavior. My work spans healthcare, fintech, and consumer apps — always grounded in empathy and rigor.
+          {copy.about.paragraph1}
         </p>
         <p className="about-body reveal reveal-delay-2">
-          I'm particularly passionate about inclusive research practices — making sure we hear from users who are often left out of the conversation: non-native speakers, people with disabilities, and those in emerging markets.
+          {copy.about.paragraph2}
         </p>
 
         <div className="about-skills reveal reveal-delay-3">
@@ -422,157 +581,52 @@ export function Portfolio() {
           <div className="about-skill"><div className="about-skill-icon">🏷️</div> Affinity diagramming</div>
         </div>
 
-        <a href="#contact" className="btn-primary reveal reveal-delay-3" style={{width: "fit-content"}}>Get in touch →</a>
+        <a href={`${baseHref}about`} className="btn-tertiary reveal reveal-delay-3" style={{width: "fit-content"}}>
+          {workCardCtaLabel(copy.about.cta)}
+          <span className="btn-ghost__arrow" aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </div>
 </section>
-
-
-<section className="methods" id="methods">
-  <div className="container">
-    <div className="section-header centered reveal">
-      <div className="eyebrow">Research Methods</div>
-      <h2 className="display display-lg" style={{marginTop: 16.0}}>My toolkit</h2>
-      <p className="section-subtitle">A mix of qualitative and quantitative methods — chosen to fit the question, not the other way around.</p>
-    </div>
-
-    <div className="methods-grid">
-      <div className="method-card primary reveal">
-        <div className="method-icon">🎙️</div>
-        <div className="method-name">User Interviews</div>
-        <p className="method-desc">Semi-structured conversations designed to surface mental models, motivations, and latent needs that surveys can't capture.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Discovery</span>
-          <span className="method-tag">Generative research</span>
-          <span className="method-tag">Mental models</span>
-        </div>
-      </div>
-
-      <div className="method-card teal reveal reveal-delay-1">
-        <div className="method-icon">🧪</div>
-        <div className="method-name">Usability Testing</div>
-        <p className="method-desc">Moderated and unmoderated sessions that reveal where users struggle, not just what they say they want.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Evaluative</span>
-          <span className="method-tag">Prototype validation</span>
-          <span className="method-tag">Iteration</span>
-        </div>
-      </div>
-
-      <div className="method-card gold reveal reveal-delay-2">
-        <div className="method-icon">📖</div>
-        <div className="method-name">Diary Studies</div>
-        <p className="method-desc">Longitudinal self-reporting that captures real-world context and behavioral change over time — not just snapshots.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Longitudinal</span>
-          <span className="method-tag">Habit formation</span>
-          <span className="method-tag">Context capture</span>
-        </div>
-      </div>
-
-      <div className="method-card teal reveal reveal-delay-1">
-        <div className="method-icon">🗺️</div>
-        <div className="method-name">Journey Mapping</div>
-        <p className="method-desc">Collaborative synthesis workshops that align teams around the full user experience, end-to-end, with emotional highs and lows.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Synthesis</span>
-          <span className="method-tag">Cross-functional alignment</span>
-          <span className="method-tag">Opportunity mapping</span>
-        </div>
-      </div>
-
-      <div className="method-card primary reveal reveal-delay-2">
-        <div className="method-icon">🃏</div>
-        <div className="method-name">Card Sorting {'&'} Tree Testing</div>
-        <p className="method-desc">Quantitative IA methods that reveal how users categorize information and find their way through navigation hierarchies.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Information Architecture</span>
-          <span className="method-tag">Navigation</span>
-          <span className="method-tag">Taxonomy</span>
-        </div>
-      </div>
-
-      <div className="method-card gold reveal reveal-delay-3">
-        <div className="method-icon">📊</div>
-        <div className="method-name">Survey {'&'} Analytics</div>
-        <p className="method-desc">Quantitative methods that validate qualitative findings at scale — combining behavioral data with attitudinal signals.</p>
-        <div className="method-when">Best for</div>
-        <div className="method-tags">
-          <span className="method-tag">Validation</span>
-          <span className="method-tag">Segmentation</span>
-          <span className="method-tag">Measurement</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
 <section id="testimonials">
   <div className="container">
     <div className="section-header centered reveal">
-      <div className="eyebrow">Testimonials</div>
-      <h2 className="display display-lg" style={{marginTop: 16.0}}>What colleagues say</h2>
+      <div className="eyebrow">{copy.testimonials.eyebrow}</div>
+      <h2 className="display display-lg" style={{marginTop: 16.0}}>{copy.testimonials.heading}</h2>
     </div>
 
-    <div className="testimonials-grid">
-      
-      <div className="testimonial-card featured reveal">
-        <div>
-          <div className="testimonial-quote-mark">"</div>
-        </div>
-        <p className="testimonial-text">
-          Niti has an extraordinary ability to translate complex user behaviors into clear, actionable insights. Her research on our onboarding flow saved us months of guesswork and directly contributed to a 34% lift in activation.
-        </p>
-        <div className="testimonial-author" style={{border: "none", padding: 0}}>
-          <div className="testimonial-avatar t-av-1">AP</div>
-          <div>
-            <div className="testimonial-name">Arjun Patel</div>
-            <div className="testimonial-role">VP of Product · HealthFlow</div>
-          </div>
-        </div>
+    <div className="testimonials-carousel reveal">
+      <div
+        className="testimonials-carousel-track"
+        style={{ transform: `translateX(-${activeTestimonial * 100}%)` }}
+      >
+        {testimonialSlides.map((slide) => {
+          const roleParts = splitRoleCompany(slide.role)
+          return (
+            <article className="testimonial-slide" key={`${slide.name}-${slide.role}`}>
+              <div className="testimonial-quote-mark">"</div>
+              <p className="testimonial-text">{slide.quote}</p>
+              <div className="testimonial-author">
+                <div>
+                  <div className="testimonial-name">{slide.name}</div>
+                  <div className="testimonial-role">{roleParts.roleLabel}</div>
+                  {roleParts.companyLabel ? (
+                    <div className="testimonial-company">{roleParts.companyLabel}</div>
+                  ) : null}
+                </div>
+              </div>
+            </article>
+          )
+        })}
       </div>
-
-      <div className="testimonial-card reveal reveal-delay-1">
-        <div className="testimonial-quote-mark">"</div>
-        <p className="testimonial-text">Working with Niti changed how our entire team thinks about research. She doesn't just deliver findings — she makes us better at asking the right questions.</p>
-        <div className="testimonial-author">
-          <div className="testimonial-avatar t-av-2">SK</div>
-          <div>
-            <div className="testimonial-name">Sara Kim</div>
-            <div className="testimonial-role">Head of Design · Novo Bank</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="testimonial-card reveal reveal-delay-2">
-        <div className="testimonial-quote-mark">"</div>
-        <p className="testimonial-text">Niti's inclusive research approach brought voices into our process we had never heard before. The result was a product that actually works for everyone.</p>
-        <div className="testimonial-author">
-          <div className="testimonial-avatar t-av-3">ML</div>
-          <div>
-            <div className="testimonial-name">Maya Lopes</div>
-            <div className="testimonial-role">Engineering Lead · Shopa</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="testimonial-card reveal reveal-delay-3">
-        <div className="testimonial-quote-mark">"</div>
-        <p className="testimonial-text">The diary study Niti ran gave us more insight in 6 weeks than 2 years of analytics had. Her synthesis process is methodical, empathetic, and genuinely inspiring.</p>
-        <div className="testimonial-author">
-          <div className="testimonial-avatar" style={{background: "linear-gradient(135deg,#d9a74a,#af840d)"}}>RJ</div>
-          <div>
-            <div className="testimonial-name">Ravi Joshi</div>
-            <div className="testimonial-role">Chief Product Officer · Lendi</div>
-          </div>
-        </div>
+      <div className="testimonials-dots" aria-hidden="true">
+        {testimonialSlides.map((slide, index) => (
+          <span
+            key={`dot-${slide.name}-${index}`}
+            className={index === activeTestimonial ? 'testimonial-dot active' : 'testimonial-dot'}
+          />
+        ))}
       </div>
     </div>
   </div>
@@ -581,16 +635,38 @@ export function Portfolio() {
 
 <section className="footer-cta" id="contact">
   <div className="container">
-    <div className="eyebrow">Let's work together</div>
+    <div className="eyebrow">{copy.contact.eyebrow}</div>
     <h2 className="display display-lg footer-cta-title" style={{marginTop: 16.0}}>
-      Have a research challenge?
+      {copy.contact.heading}
     </h2>
     <p className="footer-cta-subtitle">
-      I&apos;m open to research contracts, full-time roles, and speaking engagements. Let&apos;s find out what your users really need.
+      {copy.contact.subtitle}
     </p>
     <div className="footer-cta-actions">
-      <a href="mailto:niti@example.com" className="btn-primary">niti@example.com →</a>
-      <a href="#" className="btn-outline">Download CV</a>
+      <a href={`mailto:${copy.contact.email}`} className="btn-outline">
+        {copy.contact.email}
+        <span className="btn-ghost__arrow" aria-hidden="true">→</span>
+      </a>
+      <a
+        href="https://drive.google.com/uc?export=download&id=10gm4pZdElG34pMUI_1riEnLzsZZx0nUg"
+        className="btn-tertiary"
+      >
+        {copy.contact.downloadCv}
+        <span className="btn-tertiary__icon" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 5v10" />
+            <path d="M8 11l4 4 4-4" />
+            <path d="M5 19h14" />
+          </svg>
+        </span>
+      </a>
     </div>
   </div>
 </section>
@@ -598,21 +674,31 @@ export function Portfolio() {
 <footer>
   <div className="container">
     <div className="footer-inner">
-      <div className="footer-logo">
-        <img
-          src={resolvedTheme === 'dark' ? darkNavLogo : lightNavLogo}
-          width={32}
-          height={32}
-          alt="Niti Punjabi"
-        />
+      <div className="footer-copy">
+        {copy.footer.copyright} /{' '}
+        <a href={`mailto:${copy.footer.email}`} className="footer-email-link">
+          {copy.footer.email}
+        </a>
       </div>
       <ul className="footer-links">
-        <li><a href="#">LinkedIn</a></li>
-        <li><a href="#">Twitter / X</a></li>
-        <li><a href="#">Read.cv</a></li>
-        <li><a href="#">Medium</a></li>
+        <li>
+          <a href={copy.footer.linkedinUrl} aria-label={copy.footer.linkedinLabel}>
+            <svg
+              viewBox="0 0 24 24"
+              className="footer-link-icon"
+              aria-hidden="true"
+            >
+              <rect x="1.5" y="1.5" width="21" height="21" rx="4.5" className="footer-link-icon__bg" />
+              <circle cx="7.15" cy="8" r="1.35" className="footer-link-icon__fg" />
+              <rect x="5.8" y="10" width="2.7" height="8.2" className="footer-link-icon__fg" />
+              <path
+                d="M10.3 10h2.55v1.1c.52-.82 1.5-1.35 2.76-1.35c2.22 0 3.59 1.42 3.59 3.95v4.5h-2.62v-4.08c0-1.2-.58-1.95-1.62-1.95c-1.14 0-1.94.83-1.94 2.16v3.87H10.3z"
+                className="footer-link-icon__fg"
+              />
+            </svg>
+          </a>
+        </li>
       </ul>
-      <div className="footer-copy">© 2026 Niti Punjabi</div>
     </div>
   </div>
 </footer>
