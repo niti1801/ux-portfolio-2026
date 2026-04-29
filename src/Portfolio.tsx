@@ -145,6 +145,8 @@ export function Portfolio() {
   const showThemeSwitch = siteShowsThemeSwitch()
   const [activeSection, setActiveSection] = useState<NavSection | null>(null)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const [mobileNavTopOffset, setMobileNavTopOffset] = useState(80)
   const { scrollYProgress: workStackProgress } = useScroll({
     target: workStackRootRef,
     offset: ['start 78%', 'end 22%'],
@@ -155,14 +157,51 @@ export function Portfolio() {
     { quote: copy.testimonials.card2Quote, name: copy.testimonials.card2Name, role: copy.testimonials.card2Role },
     { quote: copy.testimonials.card3Quote, name: copy.testimonials.card3Name, role: copy.testimonials.card3Role },
   ]
+  const contactHeadingEmphasis = 'for me?'
+  const contactHeadingLower = copy.contact.heading.toLowerCase()
+  const contactHeadingStart = contactHeadingLower.lastIndexOf(contactHeadingEmphasis)
+  const contactHeadingHasEmphasis = contactHeadingStart >= 0
+  const contactHeadingPrefix = contactHeadingHasEmphasis
+    ? copy.contact.heading.slice(0, contactHeadingStart).trimEnd()
+    : copy.contact.heading
+  const workHeadingEmphasis = 'work'
+  const workHeadingLower = copy.work.heading.toLowerCase()
+  const workHeadingStart = workHeadingLower.lastIndexOf(workHeadingEmphasis)
+  const workHeadingHasEmphasis = workHeadingStart >= 0
+  const workHeadingPrefix = workHeadingHasEmphasis
+    ? copy.work.heading.slice(0, workHeadingStart).trimEnd()
+    : copy.work.heading
+  const workHeadingSuffix = workHeadingHasEmphasis
+    ? copy.work.heading.slice(workHeadingStart + workHeadingEmphasis.length)
+    : ''
+  const testimonialsHeadingEmphasis = 'say'
+  const testimonialsHeadingLower = copy.testimonials.heading.toLowerCase()
+  const testimonialsHeadingStart = testimonialsHeadingLower.lastIndexOf(testimonialsHeadingEmphasis)
+  const testimonialsHeadingHasEmphasis = testimonialsHeadingStart >= 0
+  const testimonialsHeadingPrefix = testimonialsHeadingHasEmphasis
+    ? copy.testimonials.heading.slice(0, testimonialsHeadingStart).trimEnd()
+    : copy.testimonials.heading
+  const testimonialsHeadingSuffix = testimonialsHeadingHasEmphasis
+    ? copy.testimonials.heading.slice(testimonialsHeadingStart + testimonialsHeadingEmphasis.length)
+    : ''
 
   const toggleTheme = useCallback(() => {
     setPreference(resolvedTheme === 'dark' ? 'light' : 'dark')
   }, [resolvedTheme, setPreference])
 
+  const closeMobileNav = useCallback(() => {
+    setIsMobileNavOpen(false)
+  }, [])
+
   const goHome = useCallback((e: MouseEvent<HTMLAnchorElement>) => {
     if (e.button !== 0) return
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
+    if (isMobileViewport) {
+      e.preventDefault()
+      setIsMobileNavOpen((prev) => !prev)
+      return
+    }
     e.preventDefault()
     window.scrollTo({ top: 0, behavior: 'smooth' })
     try {
@@ -324,17 +363,50 @@ export function Portfolio() {
     return () => window.clearInterval(timer)
   }, [reduceMotion, testimonialSlides.length])
 
+  useEffect(() => {
+    if (!isMobileNavOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isMobileNavOpen])
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.matchMedia('(min-width: 901px)').matches) {
+        setIsMobileNavOpen(false)
+      }
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  useEffect(() => {
+    const syncMobileNavTopOffset = () => {
+      const nextOffset = navRef.current?.offsetHeight ?? 80
+      setMobileNavTopOffset(nextOffset)
+    }
+    syncMobileNavTopOffset()
+    window.addEventListener('resize', syncMobileNavTopOffset)
+    window.addEventListener('scroll', syncMobileNavTopOffset, { passive: true })
+    return () => {
+      window.removeEventListener('resize', syncMobileNavTopOffset)
+      window.removeEventListener('scroll', syncMobileNavTopOffset)
+    }
+  }, [])
+
   return (
     <>
 
-<nav id="nav" ref={navRef}>
+<nav id="nav" ref={navRef} className={isMobileNavOpen ? 'mobile-nav-open' : undefined}>
   <div className="container">
     <div className="nav-inner">
-      <div className="nav-brand-shell">
+      <div className={isMobileNavOpen ? 'nav-brand-shell mobile-nav-open' : 'nav-brand-shell'}>
         <a
           href="#home"
           className="nav-brand"
-          aria-label="Niti Punjabi — home"
+          aria-label={isMobileNavOpen ? 'Close menu' : 'Niti Punjabi — home'}
           onClick={goHome}
         >
           <span className="nav-brand__logo" aria-hidden="true">
@@ -350,10 +422,10 @@ export function Portfolio() {
         </a>
       </div>
       <ul className="nav-links">
-        <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined}>{copy.nav.work}</a></li>
-        <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined}>{copy.nav.about}</a></li>
-        <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined}>{copy.nav.testimonials}</a></li>
-        <li><a href="#contact" className={activeSection === 'contact' ? 'active' : undefined}>{copy.nav.contact}</a></li>
+        <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.about}</a></li>
+        <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        <li><a href="#contact" className={activeSection === 'contact' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.contact}</a></li>
       </ul>
       <div className="nav-actions">
         <a
@@ -378,6 +450,20 @@ export function Portfolio() {
       </div>
     </div>
   </div>
+  <div
+    className={isMobileNavOpen ? 'mobile-nav-backdrop open' : 'mobile-nav-backdrop'}
+    style={{ top: mobileNavTopOffset }}
+    onClick={closeMobileNav}
+  >
+    <div className={isMobileNavOpen ? 'mobile-nav-drawer open' : 'mobile-nav-drawer'} onClick={(e) => e.stopPropagation()}>
+      <ul className="mobile-nav-links">
+        <li><a href="#work" onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        <li><a href="#about" onClick={closeMobileNav}>{copy.nav.about}</a></li>
+        <li><a href="#testimonials" onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        <li><a href="#contact" onClick={closeMobileNav}>{copy.nav.contact}</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 
@@ -398,10 +484,10 @@ export function Portfolio() {
     <div className="hero-grid">
       <div className="hero-content">
         <div className="hero-meta-row">
-          <div className="hero-tag">
-            <div className="hero-tag-dot" />
+          <a href="#contact" className="hero-tag">
+            <div className="hero-tag-dot" aria-hidden="true" />
             <span className="eyebrow">{copy.hero.availability}</span>
-          </div>
+          </a>
           <div className="hero-location" aria-label="Location">
             <span className="hero-location__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -442,8 +528,22 @@ export function Portfolio() {
   <div className="container">
     <div className="section-header reveal">
       <div className="eyebrow">{copy.work.eyebrow}</div>
-      <h2 className="display display-lg" style={{marginTop: 16.0}}>{copy.work.heading}</h2>
-      <p className="section-subtitle">{copy.work.subtitle}</p>
+      <h2 className="display display-lg work-heading" style={{marginTop: 16.0}}>
+        {workHeadingPrefix}
+        {workHeadingHasEmphasis ? (
+          <>
+            {' '}
+            <em>{workHeadingEmphasis}</em>
+            {workHeadingSuffix}
+          </>
+        ) : null}
+      </h2>
+      <p className="section-subtitle">
+        {copy.work.subtitlePrefix}
+        {' '}
+        <a href="#contact" className="section-subtitle-link">{copy.work.subtitleLink}</a>
+        {copy.work.subtitleSuffix}
+      </p>
     </div>
 
     <div className="work-grid" ref={workStackRootRef}>
@@ -488,9 +588,9 @@ export function Portfolio() {
         <h3 className="work-card-title">{copy.work.card2Title}</h3>
         <p className="work-card-desc">{copy.work.card2Description}</p>
         <div className="work-card-details">
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card2Role}</div></div>
           <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card2Methods}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card2Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card2Participants}</div></div>
           <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card2Outcome}</div></div>
         </div>
         <a href={`${baseHref}case-studies/fintech-trust-barriers`} className="work-card-link">
@@ -615,7 +715,16 @@ export function Portfolio() {
   <div className="container">
     <div className="section-header centered reveal">
       <div className="eyebrow">{copy.testimonials.eyebrow}</div>
-      <h2 className="display display-lg" style={{marginTop: 16.0}}>{copy.testimonials.heading}</h2>
+      <h2 className="display display-lg testimonials-heading" style={{marginTop: 16.0}}>
+        {testimonialsHeadingPrefix}
+        {testimonialsHeadingHasEmphasis ? (
+          <>
+            {' '}
+            <em>{testimonialsHeadingEmphasis}</em>
+            {testimonialsHeadingSuffix}
+          </>
+        ) : null}
+      </h2>
     </div>
 
     <div className="testimonials-carousel reveal">
@@ -659,7 +768,13 @@ export function Portfolio() {
   <div className="container">
     <div className="eyebrow">{copy.contact.eyebrow}</div>
     <h2 className="display display-lg footer-cta-title" style={{marginTop: 16.0}}>
-      {copy.contact.heading}
+      {contactHeadingPrefix}
+      {contactHeadingHasEmphasis ? (
+        <>
+          {' '}
+          <em>{contactHeadingEmphasis}</em>
+        </>
+      ) : null}
     </h2>
     <p className="footer-cta-subtitle">
       {copy.contact.subtitle}
@@ -697,14 +812,17 @@ export function Portfolio() {
   <div className="container">
     <div className="footer-inner">
       <div className="footer-copy">
-        {copy.footer.copyright} /{' '}
-        <a href={`mailto:${copy.footer.email}`} className="footer-email-link">
-          {copy.footer.email}
-        </a>
+        {copy.footer.copyright}
       </div>
       <ul className="footer-links">
         <li>
-          <a href={copy.footer.linkedinUrl} aria-label={copy.footer.linkedinLabel}>
+          <a
+            href={copy.footer.linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Niti Punjabi on LinkedIn"
+          >
+            <span className="footer-link-label">{copy.footer.linkedinLabel}</span>
             <svg
               viewBox="0 0 24 24"
               className="footer-link-icon"

@@ -8,6 +8,3 @@ https://www.linkedin.com/in/nitipunjabi/
 
 ## copyright
 © 2026 Niti Punjabi
-
-## email
-niti.punjabi18@gmail.com
