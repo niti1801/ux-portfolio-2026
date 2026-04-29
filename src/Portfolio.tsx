@@ -126,6 +126,7 @@ function ParallaxFeaturedShell({
 }
 
 export function Portfolio() {
+  const SHOW_WORK_SECTION = false
   const copy = landingPageCopy
   const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
@@ -422,7 +423,9 @@ export function Portfolio() {
         </a>
       </div>
       <ul className="nav-links">
-        <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        {SHOW_WORK_SECTION ? (
+          <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        ) : null}
         <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.about}</a></li>
         <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
         <li><a href="#contact" className={activeSection === 'contact' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.contact}</a></li>
@@ -457,7 +460,9 @@ export function Portfolio() {
   >
     <div className={isMobileNavOpen ? 'mobile-nav-drawer open' : 'mobile-nav-drawer'} onClick={(e) => e.stopPropagation()}>
       <ul className="mobile-nav-links">
-        <li><a href="#work" onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        {SHOW_WORK_SECTION ? (
+          <li><a href="#work" onClick={closeMobileNav}>{copy.nav.work}</a></li>
+        ) : null}
         <li><a href="#about" onClick={closeMobileNav}>{copy.nav.about}</a></li>
         <li><a href="#testimonials" onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
         <li><a href="#contact" onClick={closeMobileNav}>{copy.nav.contact}</a></li>
@@ -529,6 +534,7 @@ export function Portfolio() {
 </section>
 
 
+{SHOW_WORK_SECTION ? (
 <section id="work">
   <div className="container">
     <div className="section-header reveal">
@@ -661,6 +667,7 @@ export function Portfolio() {
     </div>
   </div>
 </section>
+ ) : null}
 
 
 <section className="about" id="about">
