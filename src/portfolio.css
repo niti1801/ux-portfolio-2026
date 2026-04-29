@@ -259,6 +259,16 @@ nav.mobile-nav-open {
   transform: translateY(-50%) translateX(0);
 }
 
+@media (max-width: 900px) {
+  /* On touch screens, prevent sticky hover/focus from keeping the name visible after tray close. */
+  .nav-brand-shell:not(.mobile-nav-open) .nav-brand__name {
+    opacity: 0;
+    transform: translateY(-50%) translateX(
+      max(calc(-100% - 0.5rem), calc(-1 * (var(--nav-logo-size) + 0.65rem)))
+    );
+  }
+}
+
 .nav-links {
   justify-self: center;
   display: flex;
