@@ -201,10 +201,13 @@ export function Portfolio() {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
     const tapTarget = e.target instanceof Element ? e.target : e.target instanceof Node ? e.target.parentElement : null
+    const clickedLogo = tapTarget?.closest('.nav-brand__logo') !== null
     const clickedName = tapTarget?.closest('.nav-brand__name') !== null
     if (isMobileViewport) {
       e.preventDefault()
-      if (clickedName) {
+      if (clickedLogo) {
+        setIsMobileNavOpen((prev) => !prev)
+      } else if (clickedName) {
         closeMobileNav()
         window.scrollTo({ top: 0, behavior: 'smooth' })
         try {
