@@ -498,6 +498,11 @@ export function Portfolio() {
             <span>Mountain View, CA</span>
           </div>
         </div>
+        <div className="hero-portrait hero-portrait-mobile" aria-hidden="true">
+          <div className="hero-portrait-frame">
+            <img src={nitiHeroPortrait} alt="" />
+          </div>
+        </div>
         <h1 className="display display-xl hero-title">
           <span className="hero-title-line">{copy.hero.titleLine1} </span>
           <span className="hero-title-line">

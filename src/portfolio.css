@@ -719,6 +719,9 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
   margin-left: auto;
   animation: fadeUp .9s .25s ease both;
 }
+.hero-portrait-mobile {
+  display: none;
+}
 
 .hero-portrait::before {
   content: '';
@@ -1425,6 +1428,7 @@ body::after {
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .hero-grid, .about-grid, .work-card-featured { grid-template-columns: 1fr; }
+  .hero-grid { gap: 28px; }
   .hero-portrait { max-width: 320px; margin: 0 auto; }
   .hero-orb {
     filter: blur(64px);
@@ -1532,6 +1536,15 @@ body::after {
 }
 
 @media (max-width: 600px) {
+  .hero-location {
+    display: none;
+  }
+  .hero-title {
+    margin-bottom: 16px;
+  }
+  .hero-desc {
+    margin-bottom: 8px;
+  }
   .hero-orb {
     filter: blur(52px);
     opacity: .28;
@@ -1558,7 +1571,24 @@ body::after {
     background-size: 30px 30px;
     opacity: .42;
   }
-  .hero-portrait { display: none; }
+  .hero-portrait {
+    display: block;
+    max-width: 210px;
+    margin: 0 auto 0;
+    aspect-ratio: 1 / 1;
+  }
+  .hero-portrait-mobile {
+    display: block;
+    margin: 14px auto 28px;
+  }
+  .hero-grid > .hero-portrait {
+    display: none;
+  }
+  .hero-portrait-frame img {
+    object-position: center 22%;
+    transform: translate3d(0, 0, 0) scale(1.16);
+    transform-origin: center 26%;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
