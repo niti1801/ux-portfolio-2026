@@ -204,17 +204,16 @@ export function Portfolio() {
       e.target instanceof Element && e.target.closest('.nav-brand__name') !== null
     if (isMobileViewport) {
       e.preventDefault()
-      if (clickedName || isMobileNavOpen) {
-        setIsMobileNavOpen(false)
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur()
-        }
+      if (clickedName) {
+        closeMobileNav()
         window.scrollTo({ top: 0, behavior: 'smooth' })
         try {
           history.replaceState(null, '', '#home')
         } catch {
           /* ignore */
         }
+      } else if (isMobileNavOpen) {
+        closeMobileNav()
       } else {
         setIsMobileNavOpen(true)
       }
@@ -227,7 +226,7 @@ export function Portfolio() {
     } catch {
       /* ignore */
     }
-  }, [isMobileNavOpen])
+  }, [closeMobileNav, isMobileNavOpen])
 
   const onPortraitPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     if (reduceMotion === true) return
