@@ -127,6 +127,8 @@ function ParallaxFeaturedShell({
 
 export function Portfolio() {
   const SHOW_WORK_SECTION = false
+  const SHOW_ABOUT_SECTION = false
+  const SHOW_TESTIMONIALS_SECTION = false
   const copy = landingPageCopy
   const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
@@ -426,8 +428,12 @@ export function Portfolio() {
         {SHOW_WORK_SECTION ? (
           <li><a href="#work" className={activeSection === 'work' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.work}</a></li>
         ) : null}
-        <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.about}</a></li>
-        <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        {SHOW_ABOUT_SECTION ? (
+          <li><a href="#about" className={activeSection === 'about' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.about}</a></li>
+        ) : null}
+        {SHOW_TESTIMONIALS_SECTION ? (
+          <li><a href="#testimonials" className={activeSection === 'testimonials' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        ) : null}
         <li><a href="#contact" className={activeSection === 'contact' ? 'active' : undefined} onClick={closeMobileNav}>{copy.nav.contact}</a></li>
       </ul>
       <div className="nav-actions">
@@ -463,8 +469,12 @@ export function Portfolio() {
         {SHOW_WORK_SECTION ? (
           <li><a href="#work" onClick={closeMobileNav}>{copy.nav.work}</a></li>
         ) : null}
-        <li><a href="#about" onClick={closeMobileNav}>{copy.nav.about}</a></li>
-        <li><a href="#testimonials" onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        {SHOW_ABOUT_SECTION ? (
+          <li><a href="#about" onClick={closeMobileNav}>{copy.nav.about}</a></li>
+        ) : null}
+        {SHOW_TESTIMONIALS_SECTION ? (
+          <li><a href="#testimonials" onClick={closeMobileNav}>{copy.nav.testimonials}</a></li>
+        ) : null}
         <li><a href="#contact" onClick={closeMobileNav}>{copy.nav.contact}</a></li>
       </ul>
     </div>
@@ -670,6 +680,7 @@ export function Portfolio() {
  ) : null}
 
 
+{SHOW_ABOUT_SECTION ? (
 <section className="about" id="about">
   <div className="container">
     <div className="about-grid">
@@ -723,6 +734,8 @@ export function Portfolio() {
     </div>
   </div>
 </section>
+) : null}
+{SHOW_TESTIMONIALS_SECTION ? (
 <section id="testimonials">
   <div className="container">
     <div className="section-header centered reveal">
@@ -774,6 +787,7 @@ export function Portfolio() {
     </div>
   </div>
 </section>
+) : null}
 
 
 <section className="footer-cta" id="contact">
