@@ -6,14 +6,8 @@ Case Studies
 ## heading
 Selected work
 
-## subtitle_prefix
-A glimpse into some of my recent research and design projects. For complete case study walkthroughs, please 
-
-## subtitle_link
-reach out
-
-## subtitle_suffix
-.
+## subtitle
+A curated collection of research projects that drove measurable product outcomes.
 
 ## card_1_tag
 Healthcare
@@ -40,30 +34,28 @@ Contextual Inquiry, Usability Testing
 52% drop-off reduction
 
 ## card_2_tag
-Digital Supply-chain
+Fintech
 
 ## card_2_year
-2024
+2023
 
 ## card_2_title
-Mapping complex business workflow across 7 geographies
+Understanding trust barriers in a peer-to-peer lending app
 
 ## card_2_description
-Qualitative research insights revealed fragmented business workflows: enterprise users jump across 13 data sources to gather, analyze and verify asset movemen data.
-
-## card_2_role
-UX Researcher (end-to-end)
+Led a diary study and in-depth interviews to map trust formation over time, uncovering 6 key trust signals that became design principles.
 
 ## card_2_methods
-User Interviews, Journey Mapping Workshops
+Diary Study, Depth Interviews
 
 ## card_2_duration
-20 weeks
+8 weeks
+
+## card_2_participants
+32 lenders & borrowers
 
 ## card_2_outcome
-Re-defined product roadmap; Optimized efforts
-
-
+6 design principles adopted
 
 ## card_3_tag
 E-commerce
@@ -112,30 +104,6 @@ Usability Sessions, Heuristic Review
 
 ## card_4_outcome
 31 gaps → 3-sprint backlog
-
-## card_5_tag
-Fintech
-
-## card_5_year
-2023
-
-## card_5_title
-Understanding trust barriers in a peer-to-peer lending app
-
-## card_5_description
-Led a diary study and in-depth interviews to map trust formation over time, uncovering 6 key trust signals that became design principles.
-
-## card_5_methods
-Diary Study, Depth Interviews
-
-## card_5_duration
-8 weeks
-
-## card_5_participants
-32 lenders & borrowers
-
-## card_5_outcome
-6 design principles adopted
 
 ## card_cta
 Read case study →
