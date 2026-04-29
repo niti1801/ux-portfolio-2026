@@ -191,6 +191,9 @@ export function Portfolio() {
 
   const closeMobileNav = useCallback(() => {
     setIsMobileNavOpen(false)
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
   }, [])
 
   const goHome = useCallback((e: MouseEvent<HTMLAnchorElement>) => {
@@ -199,7 +202,20 @@ export function Portfolio() {
     const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
     if (isMobileViewport) {
       e.preventDefault()
-      setIsMobileNavOpen((prev) => !prev)
+      if (isMobileNavOpen) {
+        setIsMobileNavOpen(false)
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        try {
+          history.replaceState(null, '', '#home')
+        } catch {
+          /* ignore */
+        }
+      } else {
+        setIsMobileNavOpen(true)
+      }
       return
     }
     e.preventDefault()
@@ -209,7 +225,7 @@ export function Portfolio() {
     } catch {
       /* ignore */
     }
-  }, [])
+  }, [isMobileNavOpen])
 
   const onPortraitPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     if (reduceMotion === true) return
@@ -295,7 +311,14 @@ export function Portfolio() {
   }, [reduceMotion])
 
   useEffect(() => {
-    const els = document.querySelectorAll('.reveal')
+    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
+    if (els.length === 0) return
+
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('visible'))
+      return
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -308,7 +331,16 @@ export function Portfolio() {
       { threshold: 0, rootMargin: '0px 0px 10% 0px' },
     )
     els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+
+    // Fallback: ensure content never stays hidden if observer misses (e.g., hash loads).
+    const revealSafetyTimer = window.setTimeout(() => {
+      els.forEach((el) => el.classList.add('visible'))
+    }, 1400)
+
+    return () => {
+      io.disconnect()
+      window.clearTimeout(revealSafetyTimer)
+    }
   }, [])
 
   useEffect(() => {
