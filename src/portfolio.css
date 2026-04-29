@@ -1594,7 +1594,7 @@ body::after {
   }
   .hero-portrait-mobile {
     display: block;
-    margin: 26px auto 38px;
+    margin: 46px auto 64px;
   }
   .hero-grid > .hero-portrait {
     display: none;
@@ -1608,7 +1608,12 @@ body::after {
     padding-bottom: 34px;
   }
   .hero-meta-row {
+    margin-top: 18px;
     margin-bottom: 30px;
+  }
+  .hero-tag {
+    padding: 5px 12px;
+    gap: 7px;
   }
   .hero-title {
     margin-bottom: 20px;
@@ -1648,7 +1653,7 @@ body::after {
     margin: 0 auto 0;
     aspect-ratio: 1 / 1;
   }
-  .hero-portrait-mobile { margin: 30px auto 44px; }
+  .hero-portrait-mobile { margin: 48px auto 68px; }
   .hero-portrait-frame img {
     object-position: center 22%;
     transform: translate3d(0, 0, 0) scale(1.16);
@@ -1665,14 +1670,19 @@ body::after {
 
 @media (max-width: 430px) {
   .hero-meta-row {
+    margin-top: 48px;
     margin-bottom: 28px;
+  }
+  .hero-tag {
+    padding: 4px 11px;
+    gap: 6px;
   }
   .hero-title {
     font-size: clamp(38px, 9.4vw, 50px);
     margin-bottom: 12px;
   }
   .hero-portrait-mobile {
-    margin: 18px auto 30px;
+    margin: 36px auto 36px;
     max-width: 198px;
   }
 }
@@ -1691,7 +1701,7 @@ body::after {
   }
   .hero-portrait-mobile {
     max-width: 184px;
-    margin: 10px auto 20px;
+    margin: 22px auto 36px;
   }
 }
 
