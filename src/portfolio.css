@@ -259,13 +259,19 @@ nav.mobile-nav-open {
   transform: translateY(-50%) translateX(0);
 }
 
-@media (max-width: 900px) {
-  /* On touch screens, prevent sticky hover/focus from keeping the name visible after tray close. */
+@media (max-width: 900px) and (hover: none) and (pointer: coarse) {
+  /* On touch/mobile, disable hover reveal and keep name visible only when tray is open. */
+  .nav-brand-shell:hover .nav-brand__name,
+  .nav-brand-shell:focus-within .nav-brand__name,
   .nav-brand-shell:not(.mobile-nav-open) .nav-brand__name {
     opacity: 0;
     transform: translateY(-50%) translateX(
       max(calc(-100% - 0.5rem), calc(-1 * (var(--nav-logo-size) + 0.65rem)))
     );
+  }
+  .nav-brand-shell.mobile-nav-open .nav-brand__name {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
   }
 }
 
