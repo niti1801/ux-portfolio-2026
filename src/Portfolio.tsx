@@ -203,8 +203,8 @@ export function Portfolio() {
     if (e.button !== 0) return
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
-    const clickedName =
-      e.target instanceof Element && e.target.closest('.nav-brand__name') !== null
+    const tapTarget = e.target instanceof Element ? e.target : e.target instanceof Node ? e.target.parentElement : null
+    const clickedName = tapTarget?.closest('.nav-brand__name') !== null
     if (isMobileViewport) {
       e.preventDefault()
       if (clickedName) {
