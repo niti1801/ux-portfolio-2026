@@ -194,6 +194,9 @@ export function Portfolio() {
 
   const closeMobileNav = useCallback(() => {
     setIsMobileNavOpen(false)
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
   }, [])
 
   const goHome = useCallback((e: MouseEvent<HTMLAnchorElement>) => {
@@ -202,7 +205,20 @@ export function Portfolio() {
     const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
     if (isMobileViewport) {
       e.preventDefault()
-      setIsMobileNavOpen((prev) => !prev)
+      if (isMobileNavOpen) {
+        setIsMobileNavOpen(false)
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        try {
+          history.replaceState(null, '', '#home')
+        } catch {
+          /* ignore */
+        }
+      } else {
+        setIsMobileNavOpen(true)
+      }
       return
     }
     e.preventDefault()
@@ -212,7 +228,7 @@ export function Portfolio() {
     } catch {
       /* ignore */
     }
-  }, [])
+  }, [isMobileNavOpen])
 
   const onPortraitPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     if (reduceMotion === true) return
