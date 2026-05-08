@@ -13,6 +13,7 @@ type Props = {
 }
 
 const NUM_ANCHORS = 10
+const MOBILE_MAX_WIDTH = 900
 const EDGE_MARGIN = 36
 const FORBIDDEN_PAD = 28
 /** Keep keyword anchors out of the hero copy column (drifting nodes may still pass behind) */
@@ -82,8 +83,8 @@ function nodeCountsForHero(w: number, h: number): { numNormal: number; numGhost:
   else numNormal = 40
 
   if (h >= 580) numNormal = Math.round(numNormal * 1.06)
-  else if (h < 420) numNormal = Math.round(numNormal * 0.9)
   else if (h < 360) numNormal = Math.round(numNormal * 0.86)
+  else if (h < 420) numNormal = Math.round(numNormal * 0.9)
 
   numNormal = clampInt(numNormal, 38, 158)
 
@@ -310,6 +311,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
     h: 0,
     dpr: 1,
     numNormal: 92,
+    numAnchors: NUM_ANCHORS,
     outer: { left: 0, top: 0, right: 0, bottom: 0 } as Rect,
     forbidden: EMPTY_FORBIDDEN,
     anchorTextAvoid: EMPTY_FORBIDDEN,
@@ -375,7 +377,8 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       if (portraitR) pillExclusions.push(inflate(portraitR, pillPad))
 
       const { numNormal, numGhost } = nodeCountsForHero(w, h)
-      const total = numNormal + NUM_ANCHORS
+      const numAnchors = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches ? 0 : NUM_ANCHORS
+      const total = numNormal + numAnchors
       const nx = new Float32Array(total)
       const ny = new Float32Array(total)
       const nvx = new Float32Array(total)
@@ -421,9 +424,9 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
         nvy[i] = Math.sin(ang) * DRIFT_SPEED * (0.6 + rnd())
       }
 
-      const ax = new Float32Array(NUM_ANCHORS)
-      const ay = new Float32Array(NUM_ANCHORS)
-      for (let a = 0; a < NUM_ANCHORS; a++) {
+      const ax = new Float32Array(numAnchors)
+      const ay = new Float32Array(numAnchors)
+      for (let a = 0; a < numAnchors; a++) {
         let placed = false
         for (let t = 0; t < 120 && !placed; t++) {
           const p = placeAnchor()
@@ -450,7 +453,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
         }
       }
 
-      for (let a = 0; a < NUM_ANCHORS; a++) {
+      for (let a = 0; a < numAnchors; a++) {
         const i = numNormal + a
         const snapped = snapAnchorOutOfText(ax[a], ay[a])
         nx[i] = snapped.x
@@ -493,6 +496,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
         h,
         dpr,
         numNormal,
+        numAnchors,
         outer,
         forbidden,
         anchorTextAvoid,
@@ -516,6 +520,10 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       canvas.style.height = `${h}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       pairAlphaSmooth.clear()
+      if (numAnchors === 0) {
+        hoverAnchorRef.current = -1
+        setPill(null)
+      }
     }
 
     const pickColors = () => {
@@ -544,7 +552,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
     const syncPill = () => {
       const slot = hoverAnchorRef.current
       const L = layoutRef.current
-      if (slot < 0 || slot >= NUM_ANCHORS) {
+      if (slot < 0 || slot >= L.numAnchors) {
         setPill(null)
         return
       }
@@ -660,7 +668,8 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       const idleLinkMax = CONNECT_BASE * (0.48 + 0.065 * meshBreath)
 
       const total = nx.length
-      const hoverslot = hoverAnchorRef.current
+      const rawHoverSlot = hoverAnchorRef.current
+      const hoverslot = rawHoverSlot >= 0 && rawHoverSlot < L.numAnchors ? rawHoverSlot : -1
       const hiIdxPre = hoverslot >= 0 ? numNormal + hoverslot : -1
 
       let pointerMaxReach = hoverslot >= 0 ? CONNECT_CURSOR + 28 : CONNECT_CURSOR + 8
@@ -1004,7 +1013,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       let best = -1
       let bestD = HIT_RADIUS
       const L = layoutRef.current
-      for (let a = 0; a < NUM_ANCHORS; a++) {
+      for (let a = 0; a < L.numAnchors; a++) {
         const i = L.numNormal + a
         const d = Math.hypot(pointerRef.current.x - L.nx[i], pointerRef.current.y - L.ny[i])
         if (d < bestD) {
@@ -1037,7 +1046,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       const ly = e.clientY - hr.top
       const L = layoutRef.current
       let hit = false
-      for (let a = 0; a < NUM_ANCHORS; a++) {
+      for (let a = 0; a < L.numAnchors; a++) {
         const i = L.numNormal + a
         if (Math.hypot(lx - L.nx[i], ly - L.ny[i]) < HIT_RADIUS + 12) {
           hoverAnchorRef.current = a
