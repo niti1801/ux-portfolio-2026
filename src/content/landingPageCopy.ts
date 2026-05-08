@@ -168,6 +168,11 @@ export const landingPageCopy = {
       'paragraph_2',
       "I'm particularly passionate about inclusive research practices — making sure we hear from users who are often left out of the conversation: non-native speakers, people with disabilities, and those in emerging markets.",
     ),
+    paragraph3: pick(
+      about,
+      'paragraph_3',
+      'I am particularly looking to contribute at the intersection of emerging technology, systems thinking, and human well-being.',
+    ),
     cta: pick(about, 'cta', 'Get in touch →'),
   },
   methods: {

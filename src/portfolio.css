@@ -961,6 +961,29 @@ section { padding: 100px 0; }
   line-height: 1.45;
   color: var(--text-1);
   margin-bottom: 24px;
+  font-style: italic;
+  position: relative;
+  padding-left: 32px;
+}
+.about-lead::before {
+  content: '“';
+  position: absolute;
+  left: 0;
+  top: -6px;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--primary);
+  opacity: 0.4;
+}
+.about-lead::after {
+  content: '”';
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 42px;
+  line-height: 0;
+  color: var(--primary);
+  opacity: 0.4;
+  transform: translateY(10px);
 }
 .about-lead em { font-style: italic; color: var(--primary); }
 

@@ -127,7 +127,7 @@ function ParallaxFeaturedShell({
 
 export function Portfolio() {
   const SHOW_WORK_SECTION = false
-  const SHOW_ABOUT_SECTION = false
+  const SHOW_ABOUT_SECTION = true
   const SHOW_TESTIMONIALS_SECTION = false
   const copy = landingPageCopy
   const baseHref = import.meta.env.BASE_URL
@@ -738,10 +738,10 @@ export function Portfolio() {
           {copy.about.lead}
         </p>
         <p className="about-body reveal reveal-delay-2">
-          {copy.about.paragraph1}
+          {copy.about.paragraph2}
         </p>
         <p className="about-body reveal reveal-delay-2">
-          {copy.about.paragraph2}
+          {copy.about.paragraph3}
         </p>
 
         <div className="about-skills reveal reveal-delay-3">

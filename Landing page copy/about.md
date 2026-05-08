@@ -1,19 +1,23 @@
 # About Section
 
 ## eyebrow
-About me
+About
 
 ## heading
-Curious by nature. Rigorous by design.
+Empathy has been my inner compass.
 
 ## lead
-I believe that the best products are built on a deep understanding of the people who use them.
+I believe the best products are shaped by a deep understanding of the people and systems around them. This takes more than asking the right questions — it takes building trust.
 
 ## paragraph_1
-With over 8 years of experience in UX research, I've partnered with teams at startups and enterprise companies to uncover the "why" behind user behavior. My work spans healthcare, fintech, and consumer apps — always grounded in empathy and rigor.
-
 ## paragraph_2
-I'm particularly passionate about inclusive research practices — making sure we hear from users who are often left out of the conversation: non-native speakers, people with disabilities, and those in emerging markets.
+With 5+ years of experience building user-centered experiences, I specialize in executing end-to-end user research using qualitative and quantitative methods like interviews and usability studies. From planning to discovery, testing to execution, I turn ambiguity into clarity through research that’s rigorous and design that’s collaborative.
+
+## paragraph_3
+In my next role, I’m particularly looking to work at the intersection of emerging technologies, systems thinking, and human well-being.
 
 ## cta
 Learn more →
+
+## archive_paragraph_1
+My design journey began in 2014, when I moved from Mumbai to pursue a Bachelor’s in Product Design at MIT Institute of Design in Pune, India. As I strengthened my foundation in design thinking and creative problem-solving, I found myself drawn to the why behind human interactions — a curiosity that pulled me toward UX (a then-buzzword that ultimately reshaped my career path).
