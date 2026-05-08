@@ -7,7 +7,7 @@ About
 Empathy has been my inner compass.
 
 ## lead
-I believe the best products are shaped by a deep understanding of the people and systems around it. This requires more than asking the right questions — it requires building trust.
+I believe the best products are shaped by a deep understanding of the people and systems around all of it. This requires more than asking the right questions — it requires building trust.
 
 ## paragraph_1
 ## paragraph_2
