@@ -13,6 +13,7 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform, type Moti
 import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
+import aboutPortraitImage from './assets/about-portrait.png'
 import { landingPageCopy } from './content/landingPageCopy'
 import { HeroNetworkField } from './hero/HeroNetworkField'
 import { siteShowsThemeSwitch } from './config/siteThemeMode'
@@ -187,6 +188,16 @@ export function Portfolio() {
     : copy.testimonials.heading
   const testimonialsHeadingSuffix = testimonialsHeadingHasEmphasis
     ? copy.testimonials.heading.slice(testimonialsHeadingStart + testimonialsHeadingEmphasis.length)
+    : ''
+  const aboutHeadingEmphasis = 'inner compass'
+  const aboutHeadingLower = copy.about.heading.toLowerCase()
+  const aboutHeadingStart = aboutHeadingLower.lastIndexOf(aboutHeadingEmphasis)
+  const aboutHeadingHasEmphasis = aboutHeadingStart >= 0
+  const aboutHeadingPrefix = aboutHeadingHasEmphasis
+    ? copy.about.heading.slice(0, aboutHeadingStart).trimEnd()
+    : copy.about.heading
+  const aboutHeadingSuffix = aboutHeadingHasEmphasis
+    ? copy.about.heading.slice(aboutHeadingStart + aboutHeadingEmphasis.length)
     : ''
 
   const toggleTheme = useCallback(() => {
@@ -712,19 +723,13 @@ export function Portfolio() {
   <div className="container">
     <div className="about-grid">
       <div className="about-visual-wrap reveal">
-        <div className="about-portrait">
-          <div className="about-portrait-inner">NP</div>
-          <div className="about-portrait-label">
-            <strong>Niti Punjabi</strong>
-            Senior UX Researcher · 8 years
-          </div>
-        </div>
-        <div className="about-years">
-          <span className="about-years-num">8+</span>
-          <div className="about-years-label">
-            Years in
-            <br />
-            research
+        <div
+          className="about-portrait"
+          onPointerMove={onPortraitPointerMove}
+          onPointerLeave={onPortraitPointerLeave}
+        >
+          <div className="about-portrait-image-wrap">
+            <img src={aboutPortraitImage} alt="Niti Punjabi at sunset by the ocean" />
           </div>
         </div>
       </div>
@@ -732,7 +737,14 @@ export function Portfolio() {
       <div className="about-content">
         <div className="eyebrow reveal">{copy.about.eyebrow}</div>
         <h2 className="display display-lg reveal reveal-delay-1" style={{marginTop: 16.0, marginBottom: 28.0}}>
-          {copy.about.heading}
+          {aboutHeadingPrefix}
+          {aboutHeadingHasEmphasis ? (
+            <>
+              {' '}
+              <em className="about-heading-emphasis">{aboutHeadingEmphasis}</em>
+              {aboutHeadingSuffix}
+            </>
+          ) : null}
         </h2>
         <p className="about-lead reveal reveal-delay-1">
           {copy.about.lead}
@@ -744,18 +756,28 @@ export function Portfolio() {
           {copy.about.paragraph3}
         </p>
 
-        <div className="about-skills reveal reveal-delay-3">
-          <div className="about-skill"><div className="about-skill-icon">🎙️</div> Moderated interviews</div>
-          <div className="about-skill"><div className="about-skill-icon">📋</div> Survey design</div>
-          <div className="about-skill"><div className="about-skill-icon">🧪</div> Usability testing</div>
-          <div className="about-skill"><div className="about-skill-icon">🗺️</div> Journey mapping</div>
-          <div className="about-skill"><div className="about-skill-icon">📊</div> Mixed methods</div>
-          <div className="about-skill"><div className="about-skill-icon">🏷️</div> Affinity diagramming</div>
-        </div>
-
-        <a href={`${baseHref}about`} className="btn-tertiary reveal reveal-delay-3" style={{width: "fit-content"}}>
-          {workCardCtaLabel(copy.about.cta)}
-          <span className="btn-ghost__arrow" aria-hidden="true">→</span>
+        <a
+          href={copy.footer.linkedinUrl}
+          className="about-linkedin-cta reveal reveal-delay-3"
+          style={{width: "fit-content"}}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Visit Niti Punjabi on LinkedIn"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="footer-link-icon"
+            aria-hidden="true"
+          >
+            <rect x="1.5" y="1.5" width="21" height="21" rx="4.5" className="footer-link-icon__bg" />
+            <circle cx="7.15" cy="8" r="1.35" className="footer-link-icon__fg" />
+            <rect x="5.8" y="10" width="2.7" height="8.2" className="footer-link-icon__fg" />
+            <path
+              d="M10.3 10h2.55v1.1c.52-.82 1.5-1.35 2.76-1.35c2.22 0 3.59 1.42 3.59 3.95v4.5h-2.62v-4.08c0-1.2-.58-1.95-1.62-1.95c-1.14 0-1.94.83-1.94 2.16v3.87H10.3z"
+              className="footer-link-icon__fg"
+            />
+          </svg>
+          <span className="footer-link-label">Let's connect</span>
         </a>
       </div>
     </div>
