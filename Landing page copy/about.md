@@ -1,7 +1,7 @@
 # About Section
 
 ## eyebrow
-About me
+About
 
 ## heading
 Curious by nature. Rigorous by design.

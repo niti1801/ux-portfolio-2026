@@ -7,10 +7,10 @@ Let's work together
 Have something for me?
 
 ## subtitle
-I'm open to full-time roles, contracts, coffee chats and in-person meetups. Let's connect!
+I'm open to full-time roles, contracts, coffee chats and in-person meetups. Feel free to connect!
 
 ## email
-Email
+Email me
 
 ## download_cv
 Resume

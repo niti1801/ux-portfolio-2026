@@ -1,6 +1,7 @@
 import aboutRaw from '../../Landing page copy/about.md?raw'
 import contactRaw from '../../Landing page copy/contact.md?raw'
 import footerRaw from '../../Landing page copy/footer.md?raw'
+import heroNetworkKeywordsRaw from '../../Landing page copy/hero-network-keywords.md?raw'
 import heroRaw from '../../Landing page copy/hero.md?raw'
 import methodsRaw from '../../Landing page copy/methods.md?raw'
 import navigationRaw from '../../Landing page copy/navigation.md?raw'
@@ -40,6 +41,7 @@ function pick(map: CopyMap, key: string, fallback: string): string {
 }
 
 const hero = parseSectionMarkdown(heroRaw)
+const heroNetworkKeywordsMap = parseSectionMarkdown(heroNetworkKeywordsRaw)
 const nav = parseSectionMarkdown(navigationRaw)
 const work = parseSectionMarkdown(workRaw)
 const about = parseSectionMarkdown(aboutRaw)
@@ -47,6 +49,26 @@ const methods = parseSectionMarkdown(methodsRaw)
 const testimonials = parseSectionMarkdown(testimonialsRaw)
 const contact = parseSectionMarkdown(contactRaw)
 const footer = parseSectionMarkdown(footerRaw)
+
+const HERO_NETWORK_KEYWORD_FALLBACKS = [
+  'Systems thinking',
+  'Empathy-driven research',
+  'Stakeholder facilitation',
+  'Mixed-methods rigor',
+  'Journey & service maps',
+  'Research ops & scaling',
+  'Inclusive design',
+  'Insight storytelling',
+  'Design–dev bridge',
+  'Experimentation mindset',
+] as const
+
+export const heroNetworkKeywords = Array.from({ length: 10 }, (_, i) => {
+  const key = `keyword_${i + 1}`
+  const fromMd = heroNetworkKeywordsMap[key]?.trim()
+  if (fromMd) return fromMd
+  return HERO_NETWORK_KEYWORD_FALLBACKS[i] ?? key
+})
 
 export const landingPageCopy = {
   nav: {
@@ -58,6 +80,7 @@ export const landingPageCopy = {
     resume: pick(nav, 'resume', 'Resume'),
   },
   hero: {
+    networkKeywords: heroNetworkKeywords,
     availability: pick(hero, 'availability', 'Available for new projects'),
     titleLine1: pick(hero, 'title_line_1', 'I make complex'),
     titleLine2Prefix: pick(hero, 'title_line_2_prefix', 'things'),
@@ -93,6 +116,11 @@ export const landingPageCopy = {
     card1Year: pick(work, 'card_1_year', '2024'),
     card1Title: pick(work, 'card_1_title', 'Redesigning patient onboarding for a digital health platform'),
     card1Description: pick(work, 'card_1_description', 'Discovered critical friction points in a 7-step registration flow through contextual inquiry and usability testing, leading to a 52% drop-off reduction.'),
+    card1Role: pick(
+      work,
+      'card_1_role',
+      'UX Research (end-to-end owner: planning, moderating, analyzing, delivering)',
+    ),
     card1Methods: pick(work, 'card_1_methods', 'Contextual Inquiry, Usability Testing'),
     card1Duration: pick(work, 'card_1_duration', '12 weeks'),
     card1Participants: pick(work, 'card_1_participants', '48 patients, 6 clinicians'),
@@ -113,6 +141,11 @@ export const landingPageCopy = {
     card3Year: pick(work, 'card_3_year', '2022'),
     card3Title: pick(work, 'card_3_title', 'Checkout friction mapping across 5 user segments'),
     card3Description: pick(work, 'card_3_description', 'Card sorting and tree testing revealed a mental model mismatch in navigation that caused 28% cart abandonment.'),
+    card3Role: pick(
+      work,
+      'card_3_role',
+      'UX Research (end-to-end owner: planning, moderating, analyzing, delivering)',
+    ),
     card3Methods: pick(work, 'card_3_methods', 'Card Sorting, Tree Testing'),
     card3Duration: pick(work, 'card_3_duration', '10 weeks'),
     card3Participants: pick(work, 'card_3_participants', '125 shoppers across 5 segments'),
@@ -121,6 +154,11 @@ export const landingPageCopy = {
     card4Year: pick(work, 'card_4_year', '2023'),
     card4Title: pick(work, 'card_4_title', 'Accessibility audit of a social media app for older adults'),
     card4Description: pick(work, 'card_4_description', 'Inclusive research with 24 adults aged 60+ surfaced 31 accessibility gaps, prioritized into a 3-sprint backlog.'),
+    card4Role: pick(
+      work,
+      'card_4_role',
+      'UX Research (end-to-end owner: planning, moderating, analyzing, delivering)',
+    ),
     card4Methods: pick(work, 'card_4_methods', 'Usability Sessions, Heuristic Review'),
     card4Duration: pick(work, 'card_4_duration', '6 weeks'),
     card4Participants: pick(work, 'card_4_participants', '24 adults aged 60+'),

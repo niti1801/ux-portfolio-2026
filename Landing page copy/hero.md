@@ -4,13 +4,13 @@
 Available for new projects
 
 ## title_line_1
-I make complex
+Making complex
 
 ## title_line_2_prefix
-things
+experiences
 
 ## title_line_2_emphasis
-feel human
+human
 
 ## description
-Hi, I'm Niti, a UX Researcher & Product Designer focused on turning user insights into clear product direction, thoughtful experiences, and measurable outcomes.
+Hello. I'm Niti, a UX Researcher & Designer helping product teams navigate ambiguous problem spaces and shape user-centric solutions with measurable business outcomes.

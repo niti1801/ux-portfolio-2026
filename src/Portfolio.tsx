@@ -14,7 +14,7 @@ import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
 import { landingPageCopy } from './content/landingPageCopy'
-import { HeroNetworkCanvas } from './hero/HeroNetworkCanvas'
+import { HeroNetworkField } from './hero/HeroNetworkField'
 import { siteShowsThemeSwitch } from './config/siteThemeMode'
 import { useTheme } from './theme/ThemeProvider'
 import './portfolio.css'
@@ -130,6 +130,7 @@ export function Portfolio() {
   const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
   const heroRef = useRef<HTMLElement>(null)
+  const heroTextColumnRef = useRef<HTMLDivElement>(null)
   const orb1Ref = useRef<HTMLDivElement>(null)
   const orb2Ref = useRef<HTMLDivElement>(null)
   const orb3Ref = useRef<HTMLDivElement>(null)
@@ -164,7 +165,7 @@ export function Portfolio() {
   const contactHeadingPrefix = contactHeadingHasEmphasis
     ? copy.contact.heading.slice(0, contactHeadingStart).trimEnd()
     : copy.contact.heading
-  const workHeadingEmphasis = 'work'
+  const workHeadingEmphasis = 'projects'
   const workHeadingLower = copy.work.heading.toLowerCase()
   const workHeadingStart = workHeadingLower.lastIndexOf(workHeadingEmphasis)
   const workHeadingHasEmphasis = workHeadingStart >= 0
@@ -432,6 +433,37 @@ export function Portfolio() {
     }
   }, [])
 
+  useEffect(() => {
+    const rootEl = workStackRootRef.current
+    if (!rootEl) return
+    let isActive = true
+
+    const syncWorkCardHeights = () => {
+      const cards = Array.from(rootEl.querySelectorAll<HTMLElement>('.work-card-featured'))
+      if (cards.length === 0) return
+      rootEl.style.removeProperty('--work-card-equal-height')
+      if (window.matchMedia('(max-width: 900px)').matches) return
+      const tallest = cards.reduce((maxHeight, cardEl) => Math.max(maxHeight, cardEl.offsetHeight), 0)
+      if (tallest > 0) {
+        rootEl.style.setProperty('--work-card-equal-height', `${tallest}px`)
+      }
+    }
+
+    syncWorkCardHeights()
+    if ('fonts' in document) {
+      void document.fonts.ready.then(() => {
+        if (!isActive) return
+        syncWorkCardHeights()
+      })
+    }
+    window.addEventListener('resize', syncWorkCardHeights)
+    return () => {
+      isActive = false
+      window.removeEventListener('resize', syncWorkCardHeights)
+      rootEl.style.removeProperty('--work-card-equal-height')
+    }
+  }, [])
+
   return (
     <>
 
@@ -505,7 +537,13 @@ export function Portfolio() {
 
 <section className="hero" id="home" ref={heroRef}>
   <div className="hero-bg">
-    <HeroNetworkCanvas heroRef={heroRef} reducedMotion={reduceMotion === true} />
+    <HeroNetworkField
+      heroRef={heroRef}
+      textColumnRef={heroTextColumnRef}
+      portraitExcludeRef={portraitRef}
+      keywords={copy.hero.networkKeywords}
+      reducedMotion={reduceMotion === true}
+    />
     <div className="hero-orb-wrap" ref={orb1Ref}>
       <div className="hero-orb hero-orb-1"></div>
     </div>
@@ -518,7 +556,7 @@ export function Portfolio() {
   </div>
   <div className="container">
     <div className="hero-grid">
-      <div className="hero-content">
+      <div className="hero-content" ref={heroTextColumnRef}>
         <div className="hero-meta-row">
           <a href="#contact" className="hero-tag">
             <div className="hero-tag-dot" aria-hidden="true" />
@@ -591,7 +629,8 @@ export function Portfolio() {
       <StackedWorkCard index={0} total={4} progress={workStackProgress} stackRef={workStackRefs[0]}>
         <ParallaxFeaturedShell
           cardClassName="work-card-featured reveal"
-          visual="🏥"
+          imageClassName="gold-grad"
+          visual="🛒"
         >
         <div className="work-card-meta">
           <span className="work-card-num">01</span>
@@ -601,12 +640,12 @@ export function Portfolio() {
         <h3 className="work-card-title">{copy.work.card1Title}</h3>
         <p className="work-card-desc">{copy.work.card1Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card1Methods}</div></div>
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card1Role}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card1Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card1Participants}</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card1Methods}</div></div>
           <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card1Outcome}</div></div>
         </div>
-        <a href={`${baseHref}case-studies/healthcare-onboarding-redesign`} className="work-card-link">
+        <a href={`${baseHref}case-studies/ecommerce-checkout-friction`} className="work-card-link">
           {workCardCtaLabel(copy.work.cardCta)}
           <span className="work-card-link__arrow" aria-hidden="true">→</span>
         </a>
@@ -630,8 +669,8 @@ export function Portfolio() {
         <p className="work-card-desc">{copy.work.card2Description}</p>
         <div className="work-card-details">
           <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card2Role}</div></div>
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card2Methods}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card2Duration}</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card2Methods}</div></div>
           <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card2Outcome}</div></div>
         </div>
         <a href={`${baseHref}case-studies/fintech-trust-barriers`} className="work-card-link">
@@ -644,23 +683,22 @@ export function Portfolio() {
       <StackedWorkCard index={2} total={4} progress={workStackProgress} stackRef={workStackRefs[2]}>
         <ParallaxFeaturedShell
           cardClassName="work-card-featured reveal reveal-delay-2"
-          imageClassName="gold-grad"
-          visual="🛒"
+          visual="🏥"
         >
         <div className="work-card-meta">
           <span className="work-card-num">03</span>
-          <span className="tag tag-gold">{copy.work.card3Tag}</span>
+          <span className="tag tag-primary">{copy.work.card3Tag}</span>
           <span className="tag tag-sand">{copy.work.card3Year}</span>
         </div>
         <h3 className="work-card-title">{copy.work.card3Title}</h3>
         <p className="work-card-desc">{copy.work.card3Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card3Methods}</div></div>
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card3Role}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card3Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card3Participants}</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card3Methods}</div></div>
           <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card3Outcome}</div></div>
         </div>
-        <a href={`${baseHref}case-studies/ecommerce-checkout-friction`} className="work-card-link">
+        <a href={`${baseHref}case-studies/healthcare-onboarding-redesign`} className="work-card-link">
           {workCardCtaLabel(copy.work.cardCta)}
           <span className="work-card-link__arrow" aria-hidden="true">→</span>
         </a>
@@ -683,9 +721,9 @@ export function Portfolio() {
         <h3 className="work-card-title">{copy.work.card4Title}</h3>
         <p className="work-card-desc">{copy.work.card4Description}</p>
         <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card4Methods}</div></div>
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card4Role}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card4Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card4Participants}</div></div>
+          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card4Methods}</div></div>
           <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card4Outcome}</div></div>
         </div>
         <a href={`${baseHref}case-studies/social-app-accessibility-audit`} className="work-card-link">
