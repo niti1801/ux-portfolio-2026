@@ -15,6 +15,7 @@ type Props = {
 const NUM_ANCHORS = 10
 const MOBILE_MAX_WIDTH = 900
 const EDGE_MARGIN = 36
+const NAV_SAFE_GAP = 12
 const FORBIDDEN_PAD = 28
 /** Keep keyword anchors out of the hero copy column (drifting nodes may still pass behind) */
 const ANCHOR_TEXT_AVOID_PAD = 24
@@ -357,6 +358,12 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
       const w = hr.width
       const h = hr.height
       const dpr = Math.min(window.devicePixelRatio ?? 1, 2)
+      const navEl = document.getElementById('nav')
+      const navRect = navEl?.getBoundingClientRect()
+      const navBottomInsideHero =
+        navRect && navRect.bottom > hr.top
+          ? Math.min(h - EDGE_MARGIN, Math.max(0, navRect.bottom - hr.top + NAV_SAFE_GAP))
+          : 0
       const textColumnR = rectRelative(textColumnEl.getBoundingClientRect(), hr)
       const portraitEl = portraitExcludeRef.current
       const prDom = portraitEl?.getBoundingClientRect()
@@ -366,7 +373,7 @@ export function HeroNetworkField({ heroRef, textColumnRef, portraitExcludeRef, k
           : null
       const outer: Rect = {
         left: EDGE_MARGIN,
-        top: EDGE_MARGIN,
+        top: Math.max(EDGE_MARGIN, navBottomInsideHero),
         right: w - EDGE_MARGIN,
         bottom: h - EDGE_MARGIN,
       }
