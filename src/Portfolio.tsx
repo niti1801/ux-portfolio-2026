@@ -14,7 +14,7 @@ import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
 import { landingPageCopy } from './content/landingPageCopy'
-import { HeroNetworkCanvas } from './hero/HeroNetworkCanvas'
+import { HeroNetworkField } from './hero/HeroNetworkField'
 import { siteShowsThemeSwitch } from './config/siteThemeMode'
 import { useTheme } from './theme/ThemeProvider'
 import './portfolio.css'
@@ -133,6 +133,7 @@ export function Portfolio() {
   const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
   const heroRef = useRef<HTMLElement>(null)
+  const heroTextColumnRef = useRef<HTMLDivElement>(null)
   const orb1Ref = useRef<HTMLDivElement>(null)
   const orb2Ref = useRef<HTMLDivElement>(null)
   const orb3Ref = useRef<HTMLDivElement>(null)
@@ -504,7 +505,13 @@ export function Portfolio() {
 
 <section className="hero" id="home" ref={heroRef}>
   <div className="hero-bg">
-    <HeroNetworkCanvas heroRef={heroRef} reducedMotion={reduceMotion === true} />
+    <HeroNetworkField
+      heroRef={heroRef}
+      textColumnRef={heroTextColumnRef}
+      portraitExcludeRef={portraitRef}
+      keywords={copy.hero.networkKeywords}
+      reducedMotion={reduceMotion === true}
+    />
     <div className="hero-orb-wrap" ref={orb1Ref}>
       <div className="hero-orb hero-orb-1"></div>
     </div>
@@ -517,7 +524,7 @@ export function Portfolio() {
   </div>
   <div className="container">
     <div className="hero-grid">
-      <div className="hero-content">
+      <div className="hero-content" ref={heroTextColumnRef}>
         <div className="hero-meta-row">
           <a href="#contact" className="hero-tag">
             <div className="hero-tag-dot" aria-hidden="true" />

@@ -1,6 +1,7 @@
 import aboutRaw from '../../Landing page copy/about.md?raw'
 import contactRaw from '../../Landing page copy/contact.md?raw'
 import footerRaw from '../../Landing page copy/footer.md?raw'
+import heroNetworkKeywordsRaw from '../../Landing page copy/hero-network-keywords.md?raw'
 import heroRaw from '../../Landing page copy/hero.md?raw'
 import methodsRaw from '../../Landing page copy/methods.md?raw'
 import navigationRaw from '../../Landing page copy/navigation.md?raw'
@@ -40,6 +41,7 @@ function pick(map: CopyMap, key: string, fallback: string): string {
 }
 
 const hero = parseSectionMarkdown(heroRaw)
+const heroNetworkKeywordsMap = parseSectionMarkdown(heroNetworkKeywordsRaw)
 const nav = parseSectionMarkdown(navigationRaw)
 const work = parseSectionMarkdown(workRaw)
 const about = parseSectionMarkdown(aboutRaw)
@@ -47,6 +49,26 @@ const methods = parseSectionMarkdown(methodsRaw)
 const testimonials = parseSectionMarkdown(testimonialsRaw)
 const contact = parseSectionMarkdown(contactRaw)
 const footer = parseSectionMarkdown(footerRaw)
+
+const HERO_NETWORK_KEYWORD_FALLBACKS = [
+  'Systems thinking',
+  'Empathy-driven research',
+  'Stakeholder facilitation',
+  'Mixed-methods rigor',
+  'Journey & service maps',
+  'Research ops & scaling',
+  'Inclusive design',
+  'Insight storytelling',
+  'Design–dev bridge',
+  'Experimentation mindset',
+] as const
+
+export const heroNetworkKeywords = Array.from({ length: 10 }, (_, i) => {
+  const key = `keyword_${i + 1}`
+  const fromMd = heroNetworkKeywordsMap[key]?.trim()
+  if (fromMd) return fromMd
+  return HERO_NETWORK_KEYWORD_FALLBACKS[i] ?? key
+})
 
 export const landingPageCopy = {
   nav: {
@@ -58,6 +80,7 @@ export const landingPageCopy = {
     resume: pick(nav, 'resume', 'Resume'),
   },
   hero: {
+    networkKeywords: heroNetworkKeywords,
     availability: pick(hero, 'availability', 'Available for new projects'),
     titleLine1: pick(hero, 'title_line_1', 'I make complex'),
     titleLine2Prefix: pick(hero, 'title_line_2_prefix', 'things'),
