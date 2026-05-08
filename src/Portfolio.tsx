@@ -267,10 +267,14 @@ export function Portfolio() {
     if (!nav) return
     const onScroll = () => {
       nav.classList.toggle('scrolled', window.scrollY > 40)
+      document.body.classList.toggle('has-scrolled', window.scrollY > 8)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.body.classList.remove('has-scrolled')
+    }
   }, [])
 
   useEffect(() => {

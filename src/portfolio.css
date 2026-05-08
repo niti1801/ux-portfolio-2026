@@ -483,6 +483,14 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
   overflow-y: visible;
 }
 
+@media (min-width: 901px) {
+  .hero {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+}
+
 /* Full-width container like other sections; otherwise flex shrink-wrap + margin:auto centers a narrow column. */
 .hero > .container {
   width: 100%;
@@ -842,6 +850,42 @@ section { padding: 100px 0; }
   scroll-snap-stop: always;
   /* Counter global scroll-padding so Work starts at the section background. */
   scroll-margin-top: -2.5rem;
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+/* Keep downstream section backgrounds visible above the work tray layer. */
+#about,
+#testimonials,
+.footer-cta,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 901px) {
+  #work {
+    margin-top: 0;
+    margin-bottom: 0;
+    transition: margin-top 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body.has-scrolled #work {
+    margin-top: clamp(-70px, -8vh, -44px);
+    box-shadow:
+      0 -1px 0 color-mix(in srgb, var(--border) 88%, transparent),
+      0 -24px 48px -32px rgba(25, 20, 15, 0.35);
+  }
+}
+
+@media (max-width: 900px) {
+  #work {
+    margin-top: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+  }
 }
 
 .section-header {
@@ -1067,15 +1111,16 @@ section { padding: 100px 0; }
 ═══════════════════════════════════════════════════════════ */
 .work-grid {
   display: block;
+  --work-stack-gap: 112px;
 }
 
 .work-stack-item {
   position: sticky;
-  top: 92px;
+  top: clamp(132px, 14vh, 164px);
 }
 
 .work-stack-item + .work-stack-item {
-  margin-top: 80px;
+  margin-top: var(--work-stack-gap);
 }
 
 .work-stack-sticky {
@@ -1655,10 +1700,6 @@ body::after {
 
   .work-stack-item {
     position: static;
-  }
-
-  .work-stack-item + .work-stack-item {
-    margin-top: 20px;
   }
 
   .work-stack-sticky {
