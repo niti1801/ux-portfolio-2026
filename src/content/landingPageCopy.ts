@@ -55,12 +55,12 @@ const HERO_NETWORK_KEYWORD_FALLBACKS = [
   'Empathy-driven research',
   'Stakeholder facilitation',
   'Mixed-methods rigor',
-  'Journey & service maps',
-  'Research ops & scaling',
-  'Inclusive design',
+  'Journey & service mapping',
+  'Research operations',
+  'User-centric approach',
   'Insight storytelling',
-  'Design–dev bridge',
-  'Experimentation mindset',
+  'Design–engineering bridge',
+  'Strategic product building',
 ] as const
 
 export const heroNetworkKeywords = Array.from({ length: 10 }, (_, i) => {

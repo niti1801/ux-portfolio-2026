@@ -32,7 +32,7 @@ Research operations
 
 ## keyword_7
 
-Inclusive design
+User-centric approach
 
 ## keyword_8
 
@@ -44,4 +44,4 @@ Design–engineering bridge
 
 ## keyword_10
 
-Experimentation mindset
+Strategic product building
