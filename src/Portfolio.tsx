@@ -924,8 +924,8 @@ export function Portfolio() {
       {copy.contact.subtitle}
     </p>
     <div className="footer-cta-actions">
-      <a href={`mailto:${copy.contact.email}`} className="btn-outline">
-        {copy.contact.email}
+      <a href={`mailto:${copy.contact.emailAddress}`} className="btn-outline">
+        {copy.contact.emailLabel}
         <span className="btn-ghost__arrow" aria-hidden="true">→</span>
       </a>
       <a
