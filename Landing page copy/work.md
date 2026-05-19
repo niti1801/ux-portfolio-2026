@@ -16,87 +16,92 @@ reach out
 .
 
 ## card_1_tag
-Digital Supply-chain
+Digital supply-chain
+
+## card_1_tag_type
+Evaluative
 
 ## card_1_year
 2025
 
 ## card_1_title
-Concept testing lo-fidelity prototypes with enterprise users to gather early feedback, validate design direction and ensure user-centricity
+Empowered key account managers with 3x faster access to 5 core KPIs within one enterprise solution that helped streamline workflows for digital supply-chain teams across 5 geographies
 
 ## card_1_description
-Executed 2 consecutive rounds of concept testing with business users, focusing the sessions on key workflows related to KPI monitoring and customer account performance analysis.
+Executed 2 consecutive rounds of concept testing with business users to gather early feedback, validate design direction and ensure user-centricity in the MVP.
 
 ## card_1_role
 UX Researcher
-(end-to-end)
 
 ## card_1_duration
 6 weeks
 
 ## card_1_methods
-Early-stage 
-Concept Testing
+Concept testing
 
 ## card_1_outcome
-3x faster access to 5 core business KPIs
+Validated the design direction; ensured a user-centric MVP
 
 
 
 
 ## card_2_tag
-Digital Supply-chain
+Digital supply-chain
+
+## card_2_tag_type
+Enterprise dashboard
 
 ## card_2_year
 2024
 
 ## card_2_title
-Mapping critical enterprise workflows to understand user needs, behaviors, tools and processes for monitoring customer performance and investigating supply-chain anomalies
+Prioritized 5 KPIs out of 36 in the primary dashboard of a new enterprise solution, that enabled key account managers to detect unusual movement patterns and supply-chain inefficiencies at scale
 
 ## card_2_description
-Qualitative insights revealed fragmented business workflows across 7 geographies; enterprise users jump across 13 different data sources to gather, analyze and verify supply-chain data.
+Shaped the information architecture and user flows to reflect user needs and mental models during supply-chain network data analysis at the portfolio and customer level.
 
 ## card_2_role
 UX Researcher
-(end-to-end)
 
 ## card_2_duration
-20 weeks
+7 weeks
 
 ## card_2_methods
-User Interviews, Journey Mapping Workshops
+Card Sorting
 
 ## card_2_outcome
-Re-defined product roadmap toward building a unified solution
+Enabled 3x faster access to 5 core business KPIs used for monitoring asset performance
+
 
 
 
 
 ## card_3_tag
-Digital Supply-chain
+Digital supply-chain
+
+## card_3_tag_type
+Discovery
 
 ## card_3_year
 2024
 
 ## card_3_title
-Shaping the information architecture and user flows for the PoC of a new digital supply-chain enterprise app solution
+Transformed 10+ fragmented user journeys into one consolidated solution that prevented users from having to jump across 13 different data sources to gather, analyze and verify essential supply-chain KPIs
 
 ## card_3_description
-Identified and prioritized 5 most relevant IoT-enabled KPIs out of the 36 KPIs and business metrics that form the 'baseline' for all customer performance analysis and supply-chain investigations done by account managers.
+Executed 40+ in-depth interviews to map critical enterprise workflows, user needs, tool and streamlining opportunities by leveraging IoT-enabled business data and metrics.
 
 ## card_3_role
 UX Researcher
-(end-to-end)
 
 ## card_3_duration
-7 weeks
+12 weeks
 
 ## card_3_methods
-Card Sorting
+User Interviews, Co-creation
 
 ## card_3_outcome
-Defined a user-centric Information Architecture
-
+Re-defined the product roadmap toward building a unified enterprise solution for teams across 5 geographies
 
 
 
@@ -155,7 +160,7 @@ Diary Study, Depth Interviews
 6 design principles adopted
 
 ## card_cta
-Read case study →
+Read more →
 
 
 

@@ -1,0 +1,33 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "ignorePaths": [
+    "node_modules",
+    "dist",
+    "package-lock.json",
+    "src/assets/**",
+    "*.svg",
+    "*.png"
+  ],
+  "files": [
+    "Landing page copy/**/*.md",
+    "src/content/**/*.ts",
+    "README.md"
+  ],
+  "dictionaries": ["en-us", "project"],
+  "dictionaryDefinitions": [
+    {
+      "name": "project",
+      "path": "./cspell/project-words.txt",
+      "addWords": true
+    }
+  ],
+  "flagWords": ["levaraging"],
+  "allowCompoundWords": true,
+  "ignoreRegExpList": [
+    "/^## [a-z0-9_]+$/m",
+    "/`[^`]+`/g",
+    "/https?:\\/\\/[^\\s]+/g"
+  ]
+}
