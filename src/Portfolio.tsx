@@ -14,9 +14,9 @@ import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
 import aboutPortraitImage from './assets/about-portrait.png'
-import workCard1Placeholder from './assets/work-card-1-placeholder.svg'
-import workCard2Placeholder from './assets/work-card-2-placeholder.svg'
-import workCard3Placeholder from './assets/work-card-3-placeholder.svg'
+import workCard1ConceptTesting from './assets/work-card-1-concept-testing.jpg'
+import workCard2CardSorting from './assets/work-card-2-card-sorting.jpg'
+import workCard3JourneyMapping from './assets/work-card-3-journey-mapping.jpg'
 import { landingPageCopy } from './content/landingPageCopy'
 import { HeroNetworkField } from './hero/HeroNetworkField'
 import {
@@ -679,9 +679,9 @@ export function Portfolio() {
           imageClassName="gold-grad"
           visual={
             <img
-              src={workCard1Placeholder}
+              src={workCard1ConceptTesting}
               alt=""
-              className="work-card-image-art"
+              className="work-card-image-art work-card-image-art--concept-testing"
               aria-hidden="true"
             />
           }
@@ -716,10 +716,10 @@ export function Portfolio() {
           imageClassName="teal-grad"
           visual={
             <img
-              src={workCard2Placeholder}
+              src={workCard2CardSorting}
               alt=""
               aria-hidden="true"
-              className="work-card-image-art"
+              className="work-card-image-art work-card-image-art--card-sorting"
             />
           }
         >
@@ -751,10 +751,10 @@ export function Portfolio() {
           imageClassName="gold-grad"
           visual={
             <img
-              src={workCard3Placeholder}
+              src={workCard3JourneyMapping}
               alt=""
               aria-hidden="true"
-              className="work-card-image-art"
+              className="work-card-image-art work-card-image-art--journey"
             />
           }
         >

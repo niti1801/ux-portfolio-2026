@@ -1216,6 +1216,15 @@ footer {
   object-position: center;
   z-index: 0;
 }
+.work-card-image-art--concept-testing {
+  object-position: center top;
+}
+.work-card-image-art--journey {
+  object-position: center 12%;
+}
+.work-card-image-art--card-sorting {
+  object-position: center top;
+}
 .work-card-image::after {
   content: '';
   position: absolute;
