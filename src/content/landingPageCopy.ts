@@ -117,6 +117,11 @@ export const landingPageCopy = {
     card1Year: pick(work, 'card_1_year', '2024'),
     card1Title: pick(work, 'card_1_title', 'Redesigning patient onboarding for a digital health platform'),
     card1Description: pick(work, 'card_1_description', 'Discovered critical friction points in a 7-step registration flow through contextual inquiry and usability testing, leading to a 52% drop-off reduction.'),
+    card1Role: pick(
+      work,
+      'card_1_role',
+      'UX Research (end-to-end owner: planning, moderating, analyzing, delivering)',
+    ),
     card1Methods: pick(work, 'card_1_methods', 'Contextual Inquiry, Usability Testing'),
     card1Duration: pick(work, 'card_1_duration', '12 weeks'),
     card1Participants: pick(work, 'card_1_participants', '48 patients, 6 clinicians'),
@@ -139,6 +144,11 @@ export const landingPageCopy = {
     card3Year: pick(work, 'card_3_year', '2022'),
     card3Title: pick(work, 'card_3_title', 'Checkout friction mapping across 5 user segments'),
     card3Description: pick(work, 'card_3_description', 'Card sorting and tree testing revealed a mental model mismatch in navigation that caused 28% cart abandonment.'),
+    card3Role: pick(
+      work,
+      'card_3_role',
+      'UX Research (end-to-end owner: planning, moderating, analyzing, delivering)',
+    ),
     card3Methods: pick(work, 'card_3_methods', 'Card Sorting, Tree Testing'),
     card3Duration: pick(work, 'card_3_duration', '10 weeks'),
     card3Participants: pick(work, 'card_3_participants', '125 shoppers across 5 segments'),

@@ -6,5 +6,5 @@
  */
 export const SHOW_WORK_SECTION = true
 export const SHOW_ABOUT_SECTION = true
-export const SHOW_TESTIMONIALS_SECTION = true
+export const SHOW_TESTIMONIALS_SECTION = false
 export const SHOW_WORK_CARD_CTA = false
