@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 680" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Project preview placeholder">
+  <defs>
+    <linearGradient id="bg" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbeee8"/>
+      <stop offset="40%" stop-color="#f9f3ef"/>
+      <stop offset="100%" stop-color="#d6efee"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d07258"/>
+      <stop offset="100%" stop-color="#7cc1bf"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="1.5" fill="#d07258" opacity=".18"/>
+    </pattern>
+  </defs>
+
+  <rect width="600" height="680" fill="url(#bg)"/>
+  <rect width="600" height="680" fill="url(#dots)"/>
+  <ellipse cx="300" cy="340" rx="280" ry="260" fill="#ffffff" opacity=".25"/>
+
+  <!-- top analytics band -->
+  <rect x="0" y="0" width="600" height="200" fill="#ffffff" opacity=".4"/>
+  <rect x="32" y="40" width="160" height="12" rx="6" fill="url(#accent)" opacity=".55"/>
+  <rect x="32" y="64" width="220" height="8" rx="4" fill="#e8c4b6"/>
+
+  <rect x="32" y="108" width="120" height="64" rx="0" fill="#ffffff" opacity=".7"/>
+  <rect x="48" y="128" width="64" height="8" rx="4" fill="#f0ddd4"/>
+  <rect x="48" y="144" width="88" height="16" rx="5" fill="#d07258" opacity=".45"/>
+
+  <rect x="168" y="108" width="120" height="64" fill="#ffffff" opacity=".55"/>
+  <rect x="184" y="128" width="64" height="8" rx="4" fill="#f0ddd4"/>
+  <rect x="184" y="144" width="72" height="16" rx="5" fill="#7cc1bf" opacity=".45"/>
+
+  <rect x="304" y="108" width="120" height="64" fill="#ffffff" opacity=".45"/>
+  <rect x="320" y="128" width="64" height="8" rx="4" fill="#f0ddd4"/>
+  <rect x="320" y="144" width="80" height="16" rx="5" fill="#e8957a" opacity=".4"/>
+
+  <rect x="440" y="108" width="160" height="64" fill="#ffffff" opacity=".38"/>
+  <rect x="456" y="128" width="64" height="8" rx="4" fill="#f0ddd4"/>
+  <rect x="456" y="144" width="96" height="16" rx="5" fill="#5aa8a5" opacity=".35"/>
+
+  <!-- center bar chart -->
+  <rect x="0" y="200" width="360" height="300" fill="#ffffff" opacity=".35"/>
+  <rect x="40" y="232" width="100" height="10" rx="5" fill="#d07258" opacity=".4"/>
+  <rect x="48" y="420" width="48" height="56" rx="6" fill="#f0ddd4"/>
+  <rect x="112" y="380" width="48" height="96" rx="6" fill="#d07258" opacity=".35"/>
+  <rect x="176" y="340" width="48" height="136" rx="6" fill="url(#accent)" opacity=".55"/>
+  <rect x="240" y="360" width="48" height="116" rx="6" fill="#7cc1bf" opacity=".4"/>
+  <rect x="304" y="400" width="32" height="76" rx="6" fill="#e8c4b6"/>
+
+  <!-- right journey map -->
+  <rect x="360" y="200" width="240" height="300" fill="#ffffff" opacity=".42"/>
+  <path d="M388 260 C 420 240, 452 280, 484 260 S 548 300, 580 280" fill="none" stroke="url(#accent)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="388" cy="260" r="8" fill="#d07258" opacity=".7"/>
+  <circle cx="484" cy="260" r="8" fill="#7cc1bf" opacity=".7"/>
+  <circle cx="580" cy="280" r="8" fill="#e8957a" opacity=".7"/>
+  <rect x="388" y="300" width="176" height="8" rx="4" fill="#f0ddd4"/>
+  <rect x="388" y="324" width="152" height="8" rx="4" fill="#f5e8e2"/>
+  <rect x="388" y="348" width="168" height="8" rx="4" fill="#f5e8e2"/>
+  <rect x="388" y="372" width="140" height="8" rx="4" fill="#f5e8e2"/>
+  <rect x="388" y="420" width="120" height="10" rx="5" fill="#7cc1bf" opacity=".35"/>
+  <rect x="388" y="444" width="192" height="8" rx="4" fill="#e8f6f5"/>
+  <rect x="388" y="468" width="176" height="8" rx="4" fill="#e8f6f5"/>
+
+  <!-- bottom strip -->
+  <rect x="0" y="500" width="600" height="180" fill="#ffffff" opacity=".38"/>
+  <rect x="32" y="528" width="200" height="10" rx="5" fill="#5aa8a5" opacity=".4"/>
+  <rect x="32" y="556" width="536" height="6" rx="3" fill="#e8c4b6" opacity=".6"/>
+  <rect x="32" y="574" width="480" height="6" rx="3" fill="#d6efee"/>
+  <rect x="32" y="592" width="520" height="6" rx="3" fill="#d6efee"/>
+  <rect x="32" y="610" width="440" height="6" rx="3" fill="#f0ddd4"/>
+  <rect x="32" y="628" width="500" height="6" rx="3" fill="#f0ddd4"/>
+  <rect x="32" y="646" width="380" height="6" rx="3" fill="#f5e8e2"/>
+
+  <circle cx="568" cy="520" r="6" fill="#d07258" opacity=".4"/>
+  <circle cx="24" cy="48" r="5" fill="#7cc1bf" opacity=".45"/>
+</svg>

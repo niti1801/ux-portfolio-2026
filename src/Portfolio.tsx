@@ -14,8 +14,17 @@ import lightNavLogo from './assets/light-logo-original-sq.png'
 import darkNavLogo from './assets/dark-logo-original-sq.png'
 import nitiHeroPortrait from './assets/niti-profile-img1.png'
 import aboutPortraitImage from './assets/about-portrait.png'
+import workCard1Placeholder from './assets/work-card-1-placeholder.svg'
+import workCard2Placeholder from './assets/work-card-2-placeholder.svg'
+import workCard3Placeholder from './assets/work-card-3-placeholder.svg'
 import { landingPageCopy } from './content/landingPageCopy'
 import { HeroNetworkField } from './hero/HeroNetworkField'
+import {
+  SHOW_ABOUT_SECTION,
+  SHOW_TESTIMONIALS_SECTION,
+  SHOW_WORK_CARD_CTA,
+  SHOW_WORK_SECTION,
+} from './config/siteFeatures'
 import { siteShowsThemeSwitch } from './config/siteThemeMode'
 import { useTheme } from './theme/ThemeProvider'
 import './portfolio.css'
@@ -107,19 +116,23 @@ function ParallaxFeaturedShell({
   const y1 = reduceMotion === true ? 0 : parallaxInvert ? -28 : 28
   const imageY = useTransform(scrollYProgress, [0, 1], [y0, y1])
 
+  const shellClassName = [cardClassName, rtl ? 'work-card-featured--flip' : '']
+    .filter(Boolean)
+    .join(' ')
   const imageClasses = ['work-card-image', imageClassName].filter(Boolean).join(' ')
-  const motionImageStyle = {
-    ...(rtl ? { direction: 'ltr' as const } : {}),
-    ...(imageStyle ?? {}),
+  const parallaxMediaStyle = {
     y: imageY,
+    ...(imageStyle ?? {}),
   } satisfies MotionStyle
 
   return (
-    <div ref={cardRef} className={cardClassName} style={rtl ? { direction: 'rtl' } : undefined}>
-      <motion.div className={imageClasses} style={motionImageStyle}>
-        {visual}
-      </motion.div>
-      <div className="work-card-body" style={rtl ? { direction: 'ltr' } : undefined}>
+    <div ref={cardRef} className={shellClassName}>
+      <div className={imageClasses}>
+        <motion.div className="work-card-image-media" style={parallaxMediaStyle}>
+          {visual}
+        </motion.div>
+      </div>
+      <div className="work-card-body">
         {children}
       </div>
     </div>
@@ -127,9 +140,6 @@ function ParallaxFeaturedShell({
 }
 
 export function Portfolio() {
-  const SHOW_WORK_SECTION = false
-  const SHOW_ABOUT_SECTION = true
-  const SHOW_TESTIMONIALS_SECTION = false
   const copy = landingPageCopy
   const baseHref = import.meta.env.BASE_URL
   const navRef = useRef<HTMLElement>(null)
@@ -142,8 +152,8 @@ export function Portfolio() {
   const workStackRef1 = useRef<HTMLDivElement>(null)
   const workStackRef2 = useRef<HTMLDivElement>(null)
   const workStackRef3 = useRef<HTMLDivElement>(null)
-  const workStackRef4 = useRef<HTMLDivElement>(null)
-  const workStackRefs = [workStackRef1, workStackRef2, workStackRef3, workStackRef4]
+  const workStackRefs = [workStackRef1, workStackRef2, workStackRef3]
+  const workStackCardCount = workStackRefs.length
   const workStackRootRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
   const { resolvedTheme, setPreference } = useTheme()
@@ -169,7 +179,7 @@ export function Portfolio() {
   const contactHeadingPrefix = contactHeadingHasEmphasis
     ? copy.contact.heading.slice(0, contactHeadingStart).trimEnd()
     : copy.contact.heading
-  const workHeadingEmphasis = 'work'
+  const workHeadingEmphasis = 'projects'
   const workHeadingLower = copy.work.heading.toLowerCase()
   const workHeadingStart = workHeadingLower.lastIndexOf(workHeadingEmphasis)
   const workHeadingHasEmphasis = workHeadingStart >= 0
@@ -216,8 +226,8 @@ export function Portfolio() {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     const isMobileViewport = window.matchMedia('(max-width: 900px)').matches
     const tapTarget = e.target instanceof Element ? e.target : e.target instanceof Node ? e.target.parentElement : null
-    const clickedLogo = tapTarget?.closest('.nav-brand__logo') !== null
-    const clickedName = tapTarget?.closest('.nav-brand__name') !== null
+    const clickedLogo = tapTarget?.closest('.nav-brand__logo') != null
+    const clickedName = tapTarget?.closest('.nav-brand__name') != null
     if (isMobileViewport) {
       e.preventDefault()
       if (clickedLogo) {
@@ -269,10 +279,14 @@ export function Portfolio() {
     if (!nav) return
     const onScroll = () => {
       nav.classList.toggle('scrolled', window.scrollY > 40)
+      document.body.classList.toggle('has-scrolled', window.scrollY > 8)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.body.classList.remove('has-scrolled')
+    }
   }, [])
 
   useEffect(() => {
@@ -330,7 +344,14 @@ export function Portfolio() {
   }, [reduceMotion])
 
   useEffect(() => {
-    const els = document.querySelectorAll('.reveal')
+    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
+    if (els.length === 0) return
+
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('visible'))
+      return
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -343,11 +364,26 @@ export function Portfolio() {
       { threshold: 0, rootMargin: '0px 0px 10% 0px' },
     )
     els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+
+    // Fallback: ensure content never stays hidden if observer misses (e.g., hash loads).
+    const revealSafetyTimer = window.setTimeout(() => {
+      els.forEach((el) => el.classList.add('visible'))
+    }, 1400)
+
+    return () => {
+      io.disconnect()
+      window.clearTimeout(revealSafetyTimer)
+    }
   }, [])
 
   useEffect(() => {
-    const sectionIds: NavSection[] = ['work', 'about', 'methods', 'testimonials', 'contact']
+    const sectionIds: NavSection[] = [
+      ...(SHOW_WORK_SECTION ? (['work'] as const) : []),
+      ...(SHOW_ABOUT_SECTION ? (['about'] as const) : []),
+      'methods',
+      ...(SHOW_TESTIMONIALS_SECTION ? (['testimonials'] as const) : []),
+      'contact',
+    ]
     const sectionEls = sectionIds
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null)
@@ -428,6 +464,37 @@ export function Portfolio() {
     return () => {
       window.removeEventListener('resize', syncMobileNavTopOffset)
       window.removeEventListener('scroll', syncMobileNavTopOffset)
+    }
+  }, [])
+
+  useEffect(() => {
+    const rootEl = workStackRootRef.current
+    if (!rootEl) return
+    let isActive = true
+
+    const syncWorkCardHeights = () => {
+      const cards = Array.from(rootEl.querySelectorAll<HTMLElement>('.work-card-featured'))
+      if (cards.length === 0) return
+      rootEl.style.removeProperty('--work-card-equal-height')
+      if (window.matchMedia('(max-width: 900px)').matches) return
+      const tallest = cards.reduce((maxHeight, cardEl) => Math.max(maxHeight, cardEl.offsetHeight), 0)
+      if (tallest > 0) {
+        rootEl.style.setProperty('--work-card-equal-height', `${tallest}px`)
+      }
+    }
+
+    syncWorkCardHeights()
+    if ('fonts' in document) {
+      void document.fonts.ready.then(() => {
+        if (!isActive) return
+        syncWorkCardHeights()
+      })
+    }
+    window.addEventListener('resize', syncWorkCardHeights)
+    return () => {
+      isActive = false
+      window.removeEventListener('resize', syncWorkCardHeights)
+      rootEl.style.removeProperty('--work-card-equal-height')
     }
   }, [])
 
@@ -606,42 +673,60 @@ export function Portfolio() {
     </div>
 
     <div className="work-grid" ref={workStackRootRef}>
-      <StackedWorkCard index={0} total={4} progress={workStackProgress} stackRef={workStackRefs[0]}>
+      <StackedWorkCard index={0} total={workStackCardCount} progress={workStackProgress} stackRef={workStackRefs[0]}>
         <ParallaxFeaturedShell
           cardClassName="work-card-featured reveal"
-          visual="🏥"
+          imageClassName="gold-grad"
+          visual={
+            <img
+              src={workCard1Placeholder}
+              alt=""
+              className="work-card-image-art"
+              aria-hidden="true"
+            />
+          }
         >
         <div className="work-card-meta">
           <span className="work-card-num">01</span>
-          <span className="tag tag-primary">{copy.work.card1Tag}</span>
+          <span className="tag tag-work-domain">{copy.work.card1Tag}</span>
+          <span className="tag tag-work-type">{copy.work.card1TagType}</span>
           <span className="tag tag-sand">{copy.work.card1Year}</span>
         </div>
         <h3 className="work-card-title">{copy.work.card1Title}</h3>
         <p className="work-card-desc">{copy.work.card1Description}</p>
         <div className="work-card-details">
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card1Role}</div></div>
           <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card1Methods}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card1Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card1Participants}</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card1Outcome}</div></div>
         </div>
-        <a href={`${baseHref}case-studies/healthcare-onboarding-redesign`} className="work-card-link">
-          {workCardCtaLabel(copy.work.cardCta)}
-          <span className="work-card-link__arrow" aria-hidden="true">→</span>
-        </a>
+        {SHOW_WORK_CARD_CTA ? (
+          <a href={`${baseHref}case-studies/ecommerce-checkout-friction`} className="work-card-link">
+            {workCardCtaLabel(copy.work.cardCta)}
+            <span className="work-card-link__arrow" aria-hidden="true">→</span>
+          </a>
+        ) : null}
         </ParallaxFeaturedShell>
       </StackedWorkCard>
 
-      <StackedWorkCard index={1} total={4} progress={workStackProgress} stackRef={workStackRefs[1]}>
+      <StackedWorkCard index={1} total={workStackCardCount} progress={workStackProgress} stackRef={workStackRefs[1]}>
         <ParallaxFeaturedShell
           cardClassName="work-card-featured reveal reveal-delay-1"
           rtl
           parallaxInvert
           imageClassName="teal-grad"
-          visual="🏦"
+          visual={
+            <img
+              src={workCard2Placeholder}
+              alt=""
+              aria-hidden="true"
+              className="work-card-image-art"
+            />
+          }
         >
         <div className="work-card-meta">
           <span className="work-card-num">02</span>
-          <span className="tag tag-teal">{copy.work.card2Tag}</span>
+          <span className="tag tag-work-domain">{copy.work.card2Tag}</span>
+          <span className="tag tag-work-type">{copy.work.card2TagType}</span>
           <span className="tag tag-sand">{copy.work.card2Year}</span>
         </div>
         <h3 className="work-card-title">{copy.work.card2Title}</h3>
@@ -650,72 +735,55 @@ export function Portfolio() {
           <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card2Role}</div></div>
           <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card2Methods}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card2Duration}</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card2Outcome}</div></div>
         </div>
-        <a href={`${baseHref}case-studies/fintech-trust-barriers`} className="work-card-link">
-          {workCardCtaLabel(copy.work.cardCta)}
-          <span className="work-card-link__arrow" aria-hidden="true">→</span>
-        </a>
+        {SHOW_WORK_CARD_CTA ? (
+          <a href={`${baseHref}case-studies/fintech-trust-barriers`} className="work-card-link">
+            {workCardCtaLabel(copy.work.cardCta)}
+            <span className="work-card-link__arrow" aria-hidden="true">→</span>
+          </a>
+        ) : null}
         </ParallaxFeaturedShell>
       </StackedWorkCard>
 
-      <StackedWorkCard index={2} total={4} progress={workStackProgress} stackRef={workStackRefs[2]}>
+      <StackedWorkCard index={2} total={workStackCardCount} progress={workStackProgress} stackRef={workStackRefs[2]}>
         <ParallaxFeaturedShell
           cardClassName="work-card-featured reveal reveal-delay-2"
           imageClassName="gold-grad"
-          visual="🛒"
+          visual={
+            <img
+              src={workCard3Placeholder}
+              alt=""
+              aria-hidden="true"
+              className="work-card-image-art"
+            />
+          }
         >
         <div className="work-card-meta">
           <span className="work-card-num">03</span>
-          <span className="tag tag-gold">{copy.work.card3Tag}</span>
+          <span className="tag tag-work-domain">{copy.work.card3Tag}</span>
+          <span className="tag tag-work-type">{copy.work.card3TagType}</span>
           <span className="tag tag-sand">{copy.work.card3Year}</span>
         </div>
         <h3 className="work-card-title">{copy.work.card3Title}</h3>
         <p className="work-card-desc">{copy.work.card3Description}</p>
         <div className="work-card-details">
+          <div><div className="work-detail-label">Role</div><div className="work-detail-value">{copy.work.card3Role}</div></div>
           <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card3Methods}</div></div>
           <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card3Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card3Participants}</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card3Outcome}</div></div>
         </div>
-        <a href={`${baseHref}case-studies/ecommerce-checkout-friction`} className="work-card-link">
-          {workCardCtaLabel(copy.work.cardCta)}
-          <span className="work-card-link__arrow" aria-hidden="true">→</span>
-        </a>
+        {SHOW_WORK_CARD_CTA ? (
+          <a href={`${baseHref}case-studies/healthcare-onboarding-redesign`} className="work-card-link">
+            {workCardCtaLabel(copy.work.cardCta)}
+            <span className="work-card-link__arrow" aria-hidden="true">→</span>
+          </a>
+        ) : null}
         </ParallaxFeaturedShell>
       </StackedWorkCard>
 
-      <StackedWorkCard index={3} total={4} progress={workStackProgress} stackRef={workStackRefs[3]}>
-        <ParallaxFeaturedShell
-          cardClassName="work-card-featured reveal reveal-delay-3"
-          rtl
-          parallaxInvert
-          imageStyle={{ background: 'linear-gradient(135deg, var(--primary-s), var(--accent-s))' }}
-          visual="📱"
-        >
-        <div className="work-card-meta">
-          <span className="work-card-num">04</span>
-          <span className="tag tag-teal">{copy.work.card4Tag}</span>
-          <span className="tag tag-sand">{copy.work.card4Year}</span>
-        </div>
-        <h3 className="work-card-title">{copy.work.card4Title}</h3>
-        <p className="work-card-desc">{copy.work.card4Description}</p>
-        <div className="work-card-details">
-          <div><div className="work-detail-label">Methods</div><div className="work-detail-value">{copy.work.card4Methods}</div></div>
-          <div><div className="work-detail-label">Duration</div><div className="work-detail-value">{copy.work.card4Duration}</div></div>
-          <div><div className="work-detail-label">Participants</div><div className="work-detail-value">{copy.work.card4Participants}</div></div>
-          <div><div className="work-detail-label">Outcome</div><div className="work-detail-value">{copy.work.card4Outcome}</div></div>
-        </div>
-        <a href={`${baseHref}case-studies/social-app-accessibility-audit`} className="work-card-link">
-          {workCardCtaLabel(copy.work.cardCta)}
-          <span className="work-card-link__arrow" aria-hidden="true">→</span>
-        </a>
-        </ParallaxFeaturedShell>
-      </StackedWorkCard>
     </div>
   </div>
 </section>
- ) : null}
+) : null}
 
 
 {SHOW_ABOUT_SECTION ? (
@@ -784,6 +852,7 @@ export function Portfolio() {
   </div>
 </section>
 ) : null}
+
 {SHOW_TESTIMONIALS_SECTION ? (
 <section id="testimonials">
   <div className="container">

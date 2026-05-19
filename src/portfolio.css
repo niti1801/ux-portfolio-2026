@@ -410,13 +410,18 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
 .btn-ghost__arrow,
 .work-card-link__arrow {
   display: inline-block;
+  flex-shrink: 0;
   transform-origin: center;
   width: 0;
-  margin-left: 0;
+  margin-inline-start: 0;
   opacity: 0;
   transform: translateX(-4px);
   overflow: hidden;
-  transition: transform 0.2s ease, opacity 0.2s ease, width 0.2s ease, margin-left 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    width 0.2s ease,
+    margin-inline-start 0.2s ease;
 }
 
 .btn-ghost:hover .btn-ghost__arrow,
@@ -440,7 +445,7 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
 .work-card-link:hover .work-card-link__arrow,
 .work-card-link:focus-visible .work-card-link__arrow {
   width: 0.9em;
-  margin-left: 6px;
+  margin-inline-start: 6px;
   transform: translateX(0);
   opacity: 0.95;
 }
@@ -481,6 +486,14 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
   /* Clip blurred orbs only; avoid clipping tall/zoomed hero copy */
   overflow-x: hidden;
   overflow-y: visible;
+}
+
+@media (min-width: 901px) {
+  .hero {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
 }
 
 /* Full-width container like other sections; otherwise flex shrink-wrap + margin:auto centers a narrow column. */
@@ -826,6 +839,14 @@ nav:not(.scrolled) .nav-actions .btn-ghost:hover {
 .tag-teal     { background: var(--secondary-s); color: var(--secondary-h); }
 .tag-gold     { background: var(--accent-s);    color: var(--accent-h); }
 .tag-sand     { background: var(--bg-muted);    color: var(--text-2); }
+.tag-work-domain {
+  background: var(--primary-s);
+  color: var(--primary-d);
+}
+.tag-work-type {
+  background: var(--secondary-s);
+  color: var(--secondary-h);
+}
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
@@ -842,6 +863,42 @@ section { padding: 100px 0; }
   scroll-snap-stop: always;
   /* Counter global scroll-padding so Work starts at the section background. */
   scroll-margin-top: -2.5rem;
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+/* Keep downstream section backgrounds visible above the work tray layer. */
+#about,
+#testimonials,
+.footer-cta,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 901px) {
+  #work {
+    margin-top: 0;
+    margin-bottom: 0;
+    transition: margin-top 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body.has-scrolled #work {
+    margin-top: clamp(-70px, -8vh, -44px);
+    box-shadow:
+      0 -1px 0 color-mix(in srgb, var(--border) 88%, transparent),
+      0 -24px 48px -32px rgba(25, 20, 15, 0.35);
+  }
+}
+
+@media (max-width: 900px) {
+  #work {
+    margin-top: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+  }
 }
 
 .section-header {
@@ -1067,15 +1124,18 @@ section { padding: 100px 0; }
 ═══════════════════════════════════════════════════════════ */
 .work-grid {
   display: block;
+  --work-stack-gap: 112px;
+  --work-image-min-height: 300px;
+  --work-body-padding: 40px;
 }
 
 .work-stack-item {
   position: sticky;
-  top: 92px;
+  top: clamp(132px, 14vh, 164px);
 }
 
 .work-stack-item + .work-stack-item {
-  margin-top: 80px;
+  margin-top: var(--work-stack-gap);
 }
 
 .work-stack-sticky {
@@ -1086,6 +1146,8 @@ section { padding: 100px 0; }
 .work-card-featured {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  direction: ltr;
+  min-height: var(--work-card-equal-height, auto);
   border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -1095,7 +1157,16 @@ section { padding: 100px 0; }
     transform 0.22s ease,
     box-shadow 0.22s ease,
     border-color 0.22s ease;
+  cursor: default;
+}
+.work-card-featured:has(.work-card-link) {
   cursor: pointer;
+}
+.work-card-featured--flip .work-card-body {
+  order: 1;
+}
+.work-card-featured--flip .work-card-image {
+  order: 2;
 }
 /* Option A: edge / surface — slightly stronger border + soft lift (not a big bounce) */
 .work-card-featured:hover {
@@ -1103,6 +1174,7 @@ section { padding: 100px 0; }
   border-color: var(--border-2);
   box-shadow:
     var(--shadow-md),
+    0 0 0 1px var(--border-2),
     0 14px 40px -18px rgba(25, 20, 15, 0.12);
 }
 [data-theme="dark"] .work-card-featured:hover {
@@ -1122,34 +1194,61 @@ section { padding: 100px 0; }
 
 .work-card-image {
   background: linear-gradient(135deg, var(--primary-s), var(--secondary-s));
-  min-height: 360px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 80px;
+  min-height: var(--work-image-min-height);
+  align-self: stretch;
   position: relative;
   overflow: hidden;
 }
+.work-card-image-media {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -36px;
+  bottom: -36px;
+  overflow: hidden;
+}
+.work-card-image-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
 .work-card-image::after {
   content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, transparent 60%, rgba(0,0,0,.04));
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 28%),
+    linear-gradient(135deg, transparent 55%, rgba(11, 14, 31, 0.05) 100%);
+}
+[data-theme="dark"] .work-card-image::after {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 28%),
+    linear-gradient(135deg, transparent 55%, rgba(0, 0, 0, 0.18) 100%);
 }
 
-.work-card-image.teal-grad { background: linear-gradient(135deg, var(--secondary-s), var(--bg-muted)); }
+.work-card-image.teal-grad {
+  background: linear-gradient(165deg, var(--secondary-s) 0%, #c5e3e1 100%);
+}
 .work-card-image.gold-grad { background: linear-gradient(135deg, var(--accent-s), var(--primary-s)); }
 
 .work-card-body {
-  padding: 48px;
+  padding: var(--work-body-padding);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .work-card-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px 10px;
+  margin-bottom: 16px;
 }
 .work-card-num {
   font-family: var(--font-mono);
@@ -1158,34 +1257,64 @@ section { padding: 100px 0; }
 }
 .work-card-title {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 400;
   line-height: 1.2;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   color: var(--text-1);
+  /* Lining figures: clearer stats in headings without switching typeface */
+  font-variant-numeric: lining-nums;
+  font-feature-settings: 'lnum' 1;
 }
 .work-card-desc {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-2);
-  line-height: 1.7;
-  margin-bottom: 28px;
+  line-height: 1.65;
+  margin-bottom: 22px;
 }
 .work-card-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
-  padding: 20px;
+  --work-detail-gap: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--work-detail-gap);
+  margin-bottom: 24px;
+  padding: 16px 20px;
   background: var(--bg-subtle);
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
 }
-.work-detail-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; font-family: var(--font-mono); }
-.work-detail-value { font-size: 13px; font-weight: 500; color: var(--text-1); }
+.work-card-details > div {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.work-detail-label {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+}
+.work-detail-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+  white-space: pre-line;
+  line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+  .work-card-details {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+}
 .work-card-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  direction: ltr;
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
@@ -1644,10 +1773,6 @@ body::after {
 
   .work-stack-item {
     position: static;
-  }
-
-  .work-stack-item + .work-stack-item {
-    margin-top: 20px;
   }
 
   .work-stack-sticky {
