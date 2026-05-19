@@ -256,7 +256,7 @@ export const landingPageCopy = {
       'subtitle',
       "I'm open to research contracts, full-time roles, and speaking engagements. Let's find out what your users really need.",
     ),
-    emailLabel: pick(contact, 'email', 'Email me'),
+    emailLabel: pick(contact, 'email', 'Email'),
     emailAddress: pick(contact, 'email_address', 'niti.punjabi18@gmail.com'),
     downloadCv: pick(contact, 'download_cv', 'Download CV'),
   },
